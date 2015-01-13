@@ -308,8 +308,9 @@ class timelineController extends timeline
 
 	function _replaceDocumentList(&$oModule)
 	{
+		$notice_list = Context::get('notice_list');
 		$document_list = Context::get('document_list');
-		if (is_null($document_list) || !$oModule->grant->list)
+		if ((is_null($notice_list) && is_null($document_list)) || !$oModule->grant->list)
 		{
 			return new Object();
 		}

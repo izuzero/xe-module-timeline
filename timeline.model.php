@@ -249,12 +249,16 @@ class timelineModel extends timeline
 		{
 			$oDocumentModel->setToAllDocumentExtraVars();
 		}
-		if (count($output->data))
+		if (is_array($output->data) && count($output->data))
 		{
 			foreach ($output->data as $number => $document)
 			{
 				$output->data[$number] = $GLOBALS['XE_DOCUMENT_LIST'][$document->document_srl];
 			}
+		}
+		else
+		{
+			$output->data = array();
 		}
 
 		return $output;
