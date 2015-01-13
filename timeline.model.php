@@ -12,6 +12,40 @@ class timelineModel extends timeline
 	{
 	}
 
+	function isFilterPassed($module_srl, $document_srl)
+	{
+		$timeline_info = $this->getTimelineInfo($module_srl);
+		if (!$timeline_info)
+		{
+			return FALSE;
+		}
+
+		$oDocumentModel = getModel('document');
+		$oDocument = $oDocumentModel->getDocument($document_srl);
+		if (!$oDocument->isExists())
+		{
+			return FALSE;
+		}
+
+		$tl_filter = array('readed_count', 'voted_count', 'blamed_count', 'comment_count');
+		foreach ($tl_filter as $filter)
+		{
+			$key = $timeline_info->{'cond_' . $filter};
+			$val = $timeline_info->{$filter};
+			$if_val = $oDocument->get($filter);
+			if ($filter == 'blamed_count')
+			{
+				$if_val *= -1;
+			}
+			if ($val && (($key == 'excess' && $val >= $if_val) || ($key == 'below' && $val <= $if_val) || ($key == 'more' && $val > $if_val) || ($key == 'less' && $val < $if_val)))
+			{
+				return FALSE;
+			}
+		}
+
+		return TRUE;
+	}
+
 	function getTimelineList()
 	{
 		$timeline_list = $GLOBALS['__timeline__']['timeline_list'];

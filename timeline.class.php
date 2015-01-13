@@ -9,14 +9,12 @@
 class timeline extends ModuleObject
 {
 	private $triggers = array(
-		array( 'moduleObject.proc',  'timeline', 'controller', '_setTimelineInfo',             'after'  ),
-		array( 'moduleHandler.init', 'timeline', 'controller', '_replaceMid',                  'before' ),
-		array( 'moduleHandler.init', 'timeline', 'controller', '_replaceModuleInfo',           'after'  ),
-		array( 'moduleObject.proc',  'timeline', 'controller', '_replaceModuleSrlForWrite',    'before' ),
-		array( 'moduleObject.proc',  'timeline', 'controller', '_replaceModuleSrlForCategory', 'before' ),
-		array( 'moduleObject.proc',  'timeline', 'controller', '_replaceDocumentList',         'after'  ),
-		array( 'moduleObject.proc',  'timeline', 'controller', '_replaceDocumentObject',       'after'  ),
-		array( 'moduleObject.proc',  'timeline', 'controller', '_replaceCategoryList',         'after'  )
+		array( 'moduleObject.proc',  'timeline', 'controller', '_setTimelineInfo',       'after'  ),
+		array( 'moduleHandler.init', 'timeline', 'controller', '_replaceMid',            'before' ),
+		array( 'moduleHandler.init', 'timeline', 'controller', '_replaceModuleInfo',     'after'  ),
+		array( 'moduleObject.proc',  'timeline', 'controller', '_replaceDocumentList',   'after'  ),
+		array( 'moduleObject.proc',  'timeline', 'controller', '_replaceDocumentObject', 'after'  ),
+		array( 'moduleObject.proc',  'timeline', 'controller', '_replaceCategoryList',   'after'  )
 	);
 
 	function moduleInstall()
