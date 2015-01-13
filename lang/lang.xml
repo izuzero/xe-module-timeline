@@ -18,6 +18,9 @@
 	<item name="cmd_timeline_check_all">
 		<value xml:lang="ko"><![CDATA[전체 선택]]></value>
 	</item>
+	<item name="cmd_timeline_filter">
+		<value xml:lang="ko"><![CDATA[게시글 필터]]></value>
+	</item>
 	<item name="cmd_timeline_excess">
 		<value xml:lang="ko"><![CDATA[초과]]></value>
 	</item>
