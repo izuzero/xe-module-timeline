@@ -1,0 +1,20 @@
+<query id="insertTimelineInfo" action="insert">
+	<tables>
+		<table name="timeline_registered_info" />
+	</tables>
+	<columns>
+		<column name="module_srl" var="module_srl" />
+		<column name="title" var="title" />
+		<column name="content" var="content" />
+		<column name="tags" var="tags" />
+		<column name="readed_count" var="readed_count" />
+		<column name="voted_count" var="voted_count" />
+		<column name="blamed_count" var="blamed_count" />
+		<column name="comment_count" var="comment_count" />
+		<column name="cond_readed_count" var="cond_readed_count" />
+		<column name="cond_voted_count" var="cond_voted_count" />
+		<column name="cond_blamed_count" var="cond_blamed_count" />
+		<column name="cond_comment_count" var="cond_comment_count" />
+		<column name="regdate" default="curdate()" />
+	</columns>
+</query>

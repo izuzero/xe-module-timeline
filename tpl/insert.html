@@ -1,0 +1,143 @@
+<!--// HEADER -->
+<include target="./_header.html" />
+<load target="../../module/tpl/js/module_list.js" />
+
+<p class="x_well x_well-small">{$lang->about_timeline_notice}</p>
+
+<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/timeline/tpl/insert/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+	<p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+
+<!--// BODY -->
+<form class="x_form-horizontal" action="{getUrl('')}" method="post">
+	<input type="hidden" name="module" value="timeline" />
+	<input type="hidden" name="act" value="procTimelineAdminInsert" />
+	<input type="hidden" name="module_srl" value="{$module_srl}" cond="$module_srl" />
+	<input type="hidden" name="xe_validator_id" value="modules/timeline/tpl/insert/1" />
+	<section class="section">
+		<h1>{$lang->cmd_timeline_info}</h1>
+		<div class="x_control-group">
+			<label for="title" class="x_control-label">{$lang->title}</label>
+			<div class="x_controls">
+				<input type="text" name="title" id="title" value="{$timeline_info->title}" />
+				<a href="#about_title" class="x_icon-question-sign" data-toggle="#about_title">{$lang->help}</a>
+				<p id="about_title" class="x_help-block" hidden="hidden">{$lang->about_timeline_text}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label for="content" class="x_control-label">{$lang->content}</label>
+			<div class="x_controls">
+				<input type="text" name="content" id="content" value="{$timeline_info->content}" />
+				<a href="#about_content" class="x_icon-question-sign" data-toggle="#about_content">{$lang->help}</a>
+				<p id="about_content" class="x_help-block" hidden="hidden">{$lang->about_timeline_text}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label for="tags" class="x_control-label">{$lang->tag}</label>
+			<div class="x_controls">
+				<input type="text" name="tags" id="tags" value="{$timeline_info->tags}" />
+				<a href="#about_tags" class="x_icon-question-sign" data-toggle="#about_tags">{$lang->help}</a>
+				<p id="about_tags" class="x_help-block" hidden="hidden">{$lang->about_timeline_text}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label for="readed_count" class="x_control-label">{$lang->cmd_timeline_readed_count}</label>
+			<div class="x_controls">
+				<input type="number" name="readed_count" id="readed_count" value="0"|cond="!$timeline_info->readed_count" value="{$timeline_info->readed_count}"|cond="$timeline_info->readed_count" />
+				<select name="cond_readed_count">
+					<option value="more" selected="selected"|cond="$timeline_info->cond_readed_count == 'more'">{$lang->cmd_timeline_more}</option>
+					<option value="less" selected="selected"|cond="$timeline_info->cond_readed_count == 'less'">{$lang->cmd_timeline_less}</option>
+					<option value="excess" selected="selected"|cond="$timeline_info->cond_readed_count == 'excess'">{$lang->cmd_timeline_excess}</option>
+					<option value="below" selected="selected"|cond="$timeline_info->cond_readed_count == 'below'">{$lang->cmd_timeline_below}</option>
+				</select>
+				<a href="#about_readed_count" class="x_icon-question-sign" data-toggle="#about_readed_count">{$lang->help}</a>
+				<p id="about_readed_count" class="x_help-block" hidden="hidden">{$lang->about_timeline_count}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label for="voted_count" class="x_control-label">{$lang->cmd_timeline_voted_count}</label>
+			<div class="x_controls">
+				<input type="number" name="voted_count" id="voted_count" value="0"|cond="!$timeline_info->voted_count" value="{$timeline_info->voted_count}"|cond="$timeline_info->voted_count" />
+				<select name="cond_voted_count">
+					<option value="more" selected="selected"|cond="$timeline_info->cond_voted_count == 'more'">{$lang->cmd_timeline_more}</option>
+					<option value="less" selected="selected"|cond="$timeline_info->cond_voted_count == 'less'">{$lang->cmd_timeline_less}</option>
+					<option value="excess" selected="selected"|cond="$timeline_info->cond_voted_count == 'excess'">{$lang->cmd_timeline_excess}</option>
+					<option value="below" selected="selected"|cond="$timeline_info->cond_voted_count == 'below'">{$lang->cmd_timeline_below}</option>
+				</select>
+				<a href="#about_voted_count" class="x_icon-question-sign" data-toggle="#about_voted_count">{$lang->help}</a>
+				<p id="about_voted_count" class="x_help-block" hidden="hidden">{$lang->about_timeline_count}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label for="blamed_count" class="x_control-label">{$lang->cmd_timeline_blamed_count}</label>
+			<div class="x_controls">
+				<input type="number" name="blamed_count" id="blamed_count" value="0"|cond="!$timeline_info->blamed_count" value="{$timeline_info->blamed_count}"|cond="$timeline_info->blamed_count" />
+				<select name="cond_blamed_count">
+					<option value="more" selected="selected"|cond="$timeline_info->cond_blamed_count == 'more'">{$lang->cmd_timeline_more}</option>
+					<option value="less" selected="selected"|cond="$timeline_info->cond_blamed_count == 'less'">{$lang->cmd_timeline_less}</option>
+					<option value="excess" selected="selected"|cond="$timeline_info->cond_blamed_count == 'excess'">{$lang->cmd_timeline_excess}</option>
+					<option value="below" selected="selected"|cond="$timeline_info->cond_blamed_count == 'below'">{$lang->cmd_timeline_below}</option>
+				</select>
+				<a href="#about_blamed_count" class="x_icon-question-sign" data-toggle="#about_blamed_count">{$lang->help}</a>
+				<p id="about_blamed_count" class="x_help-block" hidden="hidden">{$lang->about_timeline_count}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label for="comment_count" class="x_control-label">{$lang->cmd_timeline_comment_count}</label>
+			<div class="x_controls">
+				<input type="number" name="comment_count" id="comment_count" value="0"|cond="!$timeline_info->comment_count" value="{$timeline_info->comment_count}"|cond="$timeline_info->comment_count" />
+				<select name="cond_comment_count">
+					<option value="more" selected="selected"|cond="$timeline_info->cond_comment_count == 'more'">{$lang->cmd_timeline_more}</option>
+					<option value="less" selected="selected"|cond="$timeline_info->cond_comment_count == 'less'">{$lang->cmd_timeline_less}</option>
+					<option value="excess" selected="selected"|cond="$timeline_info->cond_comment_count == 'excess'">{$lang->cmd_timeline_excess}</option>
+					<option value="below" selected="selected"|cond="$timeline_info->cond_comment_count == 'below'">{$lang->cmd_timeline_below}</option>
+				</select>
+				<a href="#about_comment_count" class="x_icon-question-sign" data-toggle="#about_comment_count">{$lang->help}</a>
+				<p id="about_comment_count" class="x_help-block" hidden="hidden">{$lang->about_timeline_count}</p>
+			</div>
+		</div>
+	</section>
+	<section class="section">
+		<h1>{$lang->target}</h1>
+		<div cond="$module_srl" class="x_control-group">
+			<label class="x_control-label">{$lang->cmd_timeline_module_srl}</label>
+			<div class="x_controls">
+				<input type="text" value="{$module_info->browser_title} ({$module_info->mid})" disabled="disabled" />
+				<a href="#about_module_srl" class="x_icon-question-sign" data-toggle="#about_module_srl">{$lang->help}</a>
+				<p id="about_module_srl" class="x_help-block" hidden="hidden">{$lang->about_timeline_module_srl}</p>
+			</div>
+		</div>
+		<div cond="!$module_srl" class="x_control-group">
+			<label for="module_srl" class="x_control-label">{$lang->cmd_timeline_module_srl}</label>
+			<div class="x_controls">
+				<select name="module_srl" id="module_srl">
+					<option loop="$module_list => $item" value="{$item->module_srl}">{$item->browser_title} ({$item->mid})</option>
+				</select>
+				<a href="#about_module_srl" class="x_icon-question-sign" data-toggle="#about_module_srl">{$lang->help}</a>
+				<p id="about_module_srl" class="x_help-block" hidden="hidden">{$lang->about_timeline_module_srl}</p>
+			</div>
+		</div>
+		<div class="x_control-group">
+			<label for="target_module_srl_list" class="x_control-label">{$lang->cmd_timeline_collect_target}</label>
+			<div class="x_controls">
+				<input type="hidden" name="target_module_srl" id="target_module_srl" value="{implode(',', $attach_info)}" />
+				<select id="target_module_srl_list" class="modulelist_selected" size="8" multiple="multiple" style="display:block; margin:5px 0; vertical-align:top"></select>
+				<a class="x_btn x_btn-primary moduleTrigger" data-multiple="true">{$lang->cmd_add}</a>
+				<button type="button" class="x_btn modulelist_del">{$lang->cmd_delete}</button>
+				<a href="#about_target_module_srl" class="x_icon-question-sign" data-toggle="#about_target_module_srl">{$lang->help}</a>
+				<p id="about_target_module_srl" class="x_help-block" hidden="hidden">{$lang->about_timeline_count}</p>
+			</div>
+		</div>
+	</section>
+	<div class="btnArea x_clearfix">
+		<a href="{getUrl('act', 'dispTimelineAdminList', 'module_srl', '')}" class="x_pull-left x_btn">{$lang->cmd_back}</a>
+		<button type="submit" class="x_pull-right x_btn x_btn-primary">{$lang->cmd_save}</button>
+	</div>
+</form>
+
+<!--// FOOTER -->
+<script>
+//<![CDATA[
+xe.registerApp(new xe.ModuleListManager("target_module_srl"));
+//]]>
+</script>

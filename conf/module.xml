@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module>
+	<grants />
+	<permissions />
+	<actions>
+		<action name="dispTimelineAdminList" type="view" menu_name="timeline" menu_index="true" admin_index="true" />
+		<action name="dispTimelineAdminInfo" type="view" menu_name="timeline" />
+		<action name="dispTimelineAdminInsert" type="view" menu_name="timeline" />
+		<action name="procTimelineAdminInsert" type="controller" />
+		<action name="procTimelineAdminDelete" type="controller" />
+	</actions>
+	<menus>
+		<menu name="timeline" type="all">
+			<title xml:lang="ko">타임라인</title>
+		</menu>
+	</menus>
+</module>

@@ -1,0 +1,15 @@
+<query id="getAttachInfo" action="select">
+	<tables>
+		<table name="timeline_attach_info" />
+	</tables>
+	<columns>
+		<column name="target_srl" />
+	</columns>
+	<conditions>
+		<condition operation="equal" column="module_srl" var="module_srl" notnull="notnull" />
+		<condition operation="equal" column="target_srl" var="target_srl" pipe="and" />
+	</conditions>
+	<navigation>
+		<index var="sort_index" default="target_srl" order="asc" />
+	</navigation>
+</query>

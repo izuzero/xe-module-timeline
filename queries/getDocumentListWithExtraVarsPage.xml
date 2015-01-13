@@ -1,0 +1,54 @@
+<query id="getDocumentListWithExtraVarsPage" action="select">
+	<tables>
+		<table name="documents" />
+		<table name="document_extra_vars" alias="extra_vars" />
+	</tables>
+	<columns>
+		<column name="count(distinct documents.document_srl)" alias="count" />
+	</columns>
+	<conditions>
+		<condition operation="in" column="documents.module_srl" var="module_srl" filter="number" />
+		<condition operation="in" column="documents.category_srl" var="category_srl" filter="number" pipe="and" />
+		<condition operation="equal" column="documents.member_srl" var="member_srl" filter="number" pipe="and" />
+		<condition operation="equal" column="extra_vars.module_srl" default="documents.module_srl" pipe="and" />
+		<condition operation="equal" column="extra_vars.document_srl" default="documents.document_srl" pipe="and" />
+		<condition operation="equal" column="extra_vars.var_idx" var="var_idx" notnull="notnull" pipe="and" />
+		<condition operation="in" column="documents.status" var="status_list" pipe="and" />
+		<condition operation="like" column="extra_vars.value" var="var_value" notnull="notnull" pipe="and" />
+		<group pipe="and">
+			<condition operation="less" column="documents.list_order" var="list_order" filter="number" />
+			<condition operation="more" column="documents.list_order" var="rev_list_order" filter="number" pipe="and" />
+			<condition operation="less" column="documents.update_order" var="update_order" filter="number" pipe="and" />
+			<condition operation="more" column="documents.update_order" var="rev_update_order" filter="number" pipe="and" />
+		</group>
+		<group pipe="and">
+			<condition operation="like" column="documents.title" var="tl_title" />
+			<condition operation="like" column="documents.content" var="tl_content" pipe="and" />
+			<condition operation="like" column="documents.tags" var="tl_tags" pipe="and" />
+		</group>
+		<group pipe="and">
+			<condition operation="excess" column="documents.readed_count" var="tl_excess_readed_count" filter="number" />
+			<condition operation="below" column="documents.readed_count" var="tl_below_readed_count" filter="number" pipe="and" />
+			<condition operation="more" column="documents.readed_count" var="tl_more_readed_count" filter="number" pipe="and" />
+			<condition operation="less" column="documents.readed_count" var="tl_less_readed_count" filter="number" pipe="and" />
+		</group>
+		<group pipe="and">
+			<condition operation="excess" column="documents.voted_count" var="tl_excess_voted_count" filter="number" />
+			<condition operation="below" column="documents.voted_count" var="tl_below_voted_count" filter="number" pipe="and" />
+			<condition operation="more" column="documents.voted_count" var="tl_more_voted_count" filter="number" pipe="and" />
+			<condition operation="less" column="documents.voted_count" var="tl_less_voted_count" filter="number" pipe="and" />
+		</group>
+		<group pipe="and">
+			<condition operation="below" column="documents.blamed_count" var="tl_excess_blamed_count" filter="number" />
+			<condition operation="excess" column="documents.blamed_count" var="tl_below_blamed_count" filter="number" pipe="and" />
+			<condition operation="less" column="documents.blamed_count" var="tl_more_blamed_count" filter="number" pipe="and" />
+			<condition operation="more" column="documents.blamed_count" var="tl_less_blamed_count" filter="number" pipe="and" />
+		</group>
+		<group pipe="and">
+			<condition operation="excess" column="documents.comment_count" var="tl_excess_comment_count" filter="number" />
+			<condition operation="below" column="documents.comment_count" var="tl_below_comment_count" filter="number" pipe="and" />
+			<condition operation="more" column="documents.comment_count" var="tl_more_comment_count" filter="number" pipe="and" />
+			<condition operation="less" column="documents.comment_count" var="tl_less_comment_count" filter="number" pipe="and" />
+		</group>
+	</conditions>
+</query>

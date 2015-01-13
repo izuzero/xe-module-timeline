@@ -1,0 +1,15 @@
+<table name="timeline_registered_info">
+	<column name="module_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
+	<column name="title" type="text" />
+	<column name="content" type="text" />
+	<column name="tags" type="text" />
+	<column name="readed_count" type="number" size="11" default="0" notnull="notnull" index="idx_read_count" />
+	<column name="voted_count" type="number" size="11" default="0" notnull="notnull" index="idx_vote_count" />
+	<column name="blamed_count" type="number" size="11" default="0" notnull="notnull" index="idx_blame_count" />
+	<column name="comment_count" type="number" size="11" default="0" notnull="notnull" index="idx_comment_count" />
+	<column name="cond_readed_count" type="varchar" size="6" default="more" notnull="notnull" />
+	<column name="cond_voted_count" type="varchar" size="6" default="more" notnull="notnull" />
+	<column name="cond_blamed_count" type="varchar" size="6" default="more" notnull="notnull" />
+	<column name="cond_comment_count" type="varchar" size="6" default="more" notnull="notnull" />
+	<column name="regdate" type="date" index="idx_regdate" />
+</table>

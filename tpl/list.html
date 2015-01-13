@@ -1,0 +1,83 @@
+<!--// HEADER -->
+<include target="./_header.html" />
+
+<div cond="$XE_VALIDATOR_MESSAGE && $XE_VALIDATOR_ID == 'modules/timeline/tpl/list/1'" class="message {$XE_VALIDATOR_MESSAGE_TYPE}">
+	<p>{$XE_VALIDATOR_MESSAGE}</p>
+</div>
+
+<!--// BODY -->
+<div class="x_clearfix">
+	<form action="{getUrl('')}" method="post" onsubmit="return confirm('{$lang->confirm_delete}')">
+		<input type="hidden" name="module" value="timeline" />
+		<input type="hidden" name="act" value="procTimelineAdminDelete" />
+		<input type="hidden" name="xe_validator_id" value="modules/timeline/tpl/list/1" />
+		<table class="x_table x_table-striped x_table-hover">
+			<caption>
+				<strong>Total: {number_format($total_count)}, Page: {number_format($page)}/{number_format($total_page)}</strong>
+			</caption>
+			<thead>
+				<tr>
+					<th class="nowr">{$lang->no}</th>
+					<th class="nowr">{$lang->module_category}</th>
+					<th class="nowr">{$lang->mid}</th>
+					<th class="nowr">{$lang->browser_title}</th>
+					<th class="nowr">{$lang->regdate}</th>
+					<th class="nowr">{$lang->cmd_timeline_regdate}</th>
+					<th class="nowr">{$lang->cmd_setup}</th>
+					<th class="nowr"><input type="checkbox" title="{$lang->cmd_timeline_check_all}" data-name="module_srl[]" /></th>
+				</tr>
+			</thead>
+			<tbody>
+				{@$no = ($page - 1) * 10}
+				<tr loop="$modules_info => $key, $val">
+					<td>{++$no}</td>
+					<td>{$module_category[$val->module_info->module_category_srl]->title}</td>
+					<td>{$val->module_info->mid}</td>
+					<td>{$val->module_info->browser_title}</td>
+					<td>{zdate($val->module_info->regdate, 'Y-m-d H:i:s')}</td>
+					<td>{zdate($val->timeline_info->regdate, 'Y-m-d H:i:s')}</td>
+					<td><a href="{getUrl('act', 'dispTimelineAdminInfo', 'module_srl', $val->module_info->module_srl)}" class="x_icon-cog">{$lang->cmd_setup}</a></td>
+					<td><input type="checkbox" name="module_srl[]" value="{$val->module_info->module_srl}" /></td>
+				</tr>
+				<tr cond="!$modules_info">
+					<td>{$lang->msg_timeline_no_instance}</td>
+				</tr>
+			</tbody>
+		</table>
+		<div class="x_btn-group x_pull-right">
+			<a href="{getUrl('act', 'dispTimelineAdminInsert')}" class="x_btn x_btn-inverse">{$lang->cmd_registration}</a>
+			<button type="submit" class="x_btn">{$lang->cmd_delete}</button>
+		</div>
+	</form>
+	<form cond="$page_navigation" class="x_pagination x_pull-left" style="margin-top:0" action="{getUrl('')}" no-error-return-url="true">
+		<input loop="$param => $key, $val" cond="!in_array($key, array('mid', 'vid', 'act'))" type="hidden" name="{$key}" value="{$val}" />
+		<ul>
+			<li class="x_disabled"|cond="!$page || $page == 1"><a href="{getUrl('page', '')}">&laquo; {$lang->first_page}</a></li>
+			<block cond="$page_navigation->first_page != 1 && $page_navigation->first_page + $page_navigation->page_count > $page_navigation->last_page - 1 && $page_navigation->page_count != $page_navigation->total_page">
+				{@$isGoTo = true}
+				<li>
+					<a href="#goTo" title="{$lang->cmd_go_to_page}" data-toggle="toggle">&hellip;</a>
+					<span cond="$isGoTo" id="goTo" class="x_input-append">
+						<input type="number" name="page" title="{$lang->cmd_go_to_page}" min="1" max="{$page_navigation->last_page}" required="required" />
+						<button type="submit" class="x_add-on">{$lang->cmd_move}</button>
+					</span>
+				</li>
+			</block>
+			<!--@while($page_no = $page_navigation->getNextPage())-->
+				{@$last_page = $page_no}
+				<li class="x_active"|cond="$page_no == $page"><a  href="{getUrl('page', $page_no)}">{$page_no}</a></li>
+			<!--@end-->
+			<block cond="$last_page != $page_navigation->last_page && $last_page + 1 != $page_navigation->last_page">
+				{@$isGoTo = true}
+				<li>
+					<a href="#goTo" title="{$lang->cmd_go_to_page}" data-toggle="toggle">&hellip;</a>
+					<span cond="$isGoTo" id="goTo" class="x_input-append">
+						<input type="number" name="page" title="{$lang->cmd_go_to_page}" min="1" max="{$page_navigation->last_page}" required="required" />
+						<button type="submit" class="x_add-on">{$lang->cmd_move}</button>
+					</span>
+				</li>
+			</block>
+			<li class="x_disabled"|cond="$page == $page_navigation->last_page"><a href="{getUrl('page', $page_navigation->last_page)}" title="{$page_navigation->last_page}">{$lang->last_page} &raquo;</a></li>
+		</ul>
+	</form>
+</div>

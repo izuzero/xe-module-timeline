@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lang>
+	<item name="timeline">
+		<value xml:lang="ko"><![CDATA[타임라인]]></value>
+	</item>
+	<item name="cmd_timeline_list">
+		<value xml:lang="ko"><![CDATA[타임라인 목록]]></value>
+	</item>
+	<item name="cmd_timeline_info">
+		<value xml:lang="ko"><![CDATA[타임라인 정보]]></value>
+	</item>
+	<item name="cmd_timeline_register">
+		<value xml:lang="ko"><![CDATA[타임라인 등록]]></value>
+	</item>
+	<item name="cmd_timeline_regdate">
+		<value xml:lang="ko"><![CDATA[타임라인 등록일]]></value>
+	</item>
+	<item name="cmd_timeline_check_all">
+		<value xml:lang="ko"><![CDATA[전체 선택]]></value>
+	</item>
+	<item name="cmd_timeline_excess">
+		<value xml:lang="ko"><![CDATA[초과]]></value>
+	</item>
+	<item name="cmd_timeline_below">
+		<value xml:lang="ko"><![CDATA[미만]]></value>
+	</item>
+	<item name="cmd_timeline_more">
+		<value xml:lang="ko"><![CDATA[이상]]></value>
+	</item>
+	<item name="cmd_timeline_less">
+		<value xml:lang="ko"><![CDATA[이하]]></value>
+	</item>
+	<item name="cmd_timeline_readed_count">
+		<value xml:lang="ko"><![CDATA[조회 수]]></value>
+	</item>
+	<item name="cmd_timeline_voted_count">
+		<value xml:lang="ko"><![CDATA[추천 수]]></value>
+	</item>
+	<item name="cmd_timeline_blamed_count">
+		<value xml:lang="ko"><![CDATA[비추천 수]]></value>
+	</item>
+	<item name="cmd_timeline_comment_count">
+		<value xml:lang="ko"><![CDATA[댓글 수]]></value>
+	</item>
+	<item name="cmd_timeline_module_srl">
+		<value xml:lang="ko"><![CDATA[타임라인 게시판]]></value>
+	</item>
+	<item name="cmd_timeline_collect_target">
+		<value xml:lang="ko"><![CDATA[게시글을 모을 대상]]></value>
+	</item>
+	<item name="about_timeline">
+		<value xml:lang="ko"><![CDATA[여러 게시판의 글을 타임라인에서 모아 볼 수 있습니다.]]></value>
+	</item>
+	<item name="about_timeline_notice">
+		<value xml:lang="ko"><![CDATA[타임라인으로 등록한 게시판은 게시글 필터링을 적용할 경우 해당 게시판에 게시글을 등록할 때 문제가 발생할 수 있습니다. 특별한 문제가 없는 한 타임라인으로 등록한 게시판은 관리자만 게시글을 작성할 수 있도록 변경해주세요.]]></value>
+	</item>
+	<item name="about_timeline_text">
+		<value xml:lang="ko"><![CDATA[설정한 값이 들어간 게시글만 불러옵니다. 입력하지 않으면 이 조건을 사용하지 않습니다.]]></value>
+	</item>
+	<item name="about_timeline_count">
+		<value xml:lang="ko"><![CDATA[설정한 조건에 부합하는 게시글만 불러옵니다. 0을 입력하면 이 조건을 사용하지 않습니다.]]></value>
+	</item>
+	<item name="about_timeline_module_srl">
+		<value xml:lang="ko"><![CDATA[타임라인으로 지정할 게시판을 선택합니다.]]></value>
+	</item>
+	<item name="about_timeline_target_module_srl">
+		<value xml:lang="ko"><![CDATA[지정한 대상의 게시글을 타임라인 게시판에 불러옵니다.]]></value>
+	</item>
+	<item name="msg_timeline_no_module_srl">
+		<value xml:lang="ko"><![CDATA[타임라인으로 등록할 모듈시리얼번호가 없습니다.]]></value>
+	</item>
+	<item name="msg_timeline_no_instance">
+		<value xml:lang="ko"><![CDATA[등록된 타임라인이 없습니다.]]></value>
+	</item>
+</lang>
