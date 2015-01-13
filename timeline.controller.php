@@ -158,7 +158,7 @@ class timelineController extends timeline
 	{
 		$mid = Context::get('mid');
 		$document_srl = Context::get('document_srl');
-		if (!$mid || !$document_srl)
+		if (!$mid || !$document_srl || isCrawler())
 		{
 			return new Object();
 		}
