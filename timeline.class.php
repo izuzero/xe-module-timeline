@@ -8,6 +8,18 @@
 
 class timeline extends ModuleObject
 {
+	private $columns = array(
+		array( 'timeline_registered_info', 'notice',        'char', 1,  'N', TRUE  ),
+		array( 'timeline_registered_info', 'standard_date', 'date', '', '',  FALSE ),
+		array( 'timeline_registered_info', 'limit_date',    'date', '', '',  FALSE ),
+		array( 'timeline_registered_info', 'auto_renewal',  'char', 1,  'N', TRUE  )
+	);
+
+	private $indexes = array(
+		array( 'timeline_registered_info', 'idx_standard_date', array('standard_date'), FALSE ),
+		array( 'timeline_registered_info', 'idx_limit_date',    array('limit_date'),    FALSE )
+	);
+
 	private $triggers = array(
 		array( 'moduleObject.proc',  'timeline', 'controller', '_setTimelineInfo',          'after'  ),
 		array( 'moduleHandler.init', 'timeline', 'controller', '_replaceMid',               'before' ),
@@ -15,7 +27,8 @@ class timeline extends ModuleObject
 		array( 'moduleObject.proc',  'timeline', 'controller', '_rollbackBeforeModuleInfo', 'before' ),
 		array( 'moduleObject.proc',  'timeline', 'controller', '_rollbackAfterModuleInfo',  'after'  ),
 		array( 'moduleObject.proc',  'timeline', 'controller', '_replaceDocumentList',      'after'  ),
-		array( 'moduleObject.proc',  'timeline', 'controller', '_replaceCategoryList',      'after'  )
+		array( 'moduleObject.proc',  'timeline', 'controller', '_replaceCategoryList',      'after'  ),
+		array( 'moduleObject.proc',  'timeline', 'controller', '_replaceNoticeList',        'after'  )
 	);
 
 	function moduleInstall()
@@ -42,7 +55,22 @@ class timeline extends ModuleObject
 
 	function checkUpdate()
 	{
+		$oDB = DB::getInstance();
 		$oModuleModel = getModel('module');
+		foreach ($this->columns as $column)
+		{
+			if (!$oDB->isColumnExists($column[0], $column[1]))
+			{
+				return TRUE;
+			}
+		}
+		foreach ($this->indexes as $index)
+		{
+			if (!$oDB->isIndexExists($index[0], $index[1]))
+			{
+				return TRUE;
+			}
+		}
 		foreach ($this->triggers as $trigger)
 		{
 			if (!$oModuleModel->getTrigger($trigger[0], $trigger[1], $trigger[2], $trigger[3], $trigger[4]))
@@ -51,13 +79,28 @@ class timeline extends ModuleObject
 			}
 		}
 
-		return false;
+		return FALSE;
 	}
 
 	function moduleUpdate()
 	{
+		$oDB = DB::getInstance();
 		$oModuleModel = getModel('module');
 		$oModuleController = getController('module');
+		foreach ($this->columns as $column)
+		{
+			if (!$oDB->isColumnExists($column[0], $column[1]))
+			{
+				$oDB->addColumn($column[0], $column[1], $column[2], $column[3], $column[4], $column[5]);
+			}
+		}
+		foreach ($this->indexes as $index)
+		{
+			if (!$oDB->isIndexExists($index[0], $index[1]))
+			{
+				$oDB->addIndex($index[0], $index[1], $index[2], $index[3]);
+			}
+		}
 		foreach ($this->triggers as $trigger)
 		{
 			if (!$oModuleModel->getTrigger($trigger[0], $trigger[1], $trigger[2], $trigger[3], $trigger[4]))

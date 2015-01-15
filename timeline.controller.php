@@ -111,7 +111,6 @@ class timelineController extends timeline
 		$output = executeQuery('timeline.deleteAttachInfo', $args);
 		if ($output->toBool())
 		{
-			unset($GLOBALS['__timeline__']['timeline_info']);
 			unset($GLOBALS['__timeline__']['attach_info']);
 			$oCacheHandler = CacheHandler::getInstance('object', NULL, TRUE);
 			if ($oCacheHandler->isSupport())
@@ -121,6 +120,48 @@ class timelineController extends timeline
 		}
 
 		return $output;
+	}
+
+	function renewalTimelineInfo(&$timeline_info)
+	{
+		$limit_date = sscanf($timeline_info->limit_date, '%04d%02d%02d%02d%02d%02d');
+		$standard_date = sscanf($timeline_info->standard_date, '%04d%02d%02d%02d%02d%02d');
+		$is_renewal = ($timeline_info->auto_renewal === 'Y');
+		if (!($standard_date && $limit_date && $is_renewal))
+		{
+			return $timeline_info;
+		}
+
+		$sum_date = array();
+		for ($i = 0; $i < 6; $i++)
+		{
+			$sum_date[$i] = $standard_date[$i] + $limit_date[$i];
+		}
+
+		$now_date = date('YmdHis');
+		$last_date = date('YmdHis', mktime($sum_date[3], $sum_date[4], $sum_date[5], $sum_date[1], $sum_date[2], $sum_date[0]));
+		if ($last_date < $now_date)
+		{
+			while ($last_date < $now_date)
+			{
+				for ($i = 0; $i < 6; $i++)
+				{
+					$sum_date[$i] += $limit_date[$i];
+				}
+
+				$last_date = date('YmdHis', mktime($sum_date[3], $sum_date[4], $sum_date[5], $sum_date[1], $sum_date[2], $sum_date[0]));
+			}
+			for ($i = 0; $i < 6; $i++)
+			{
+				$sum_date[$i] -= $limit_date[$i];
+			}
+
+			$new_standard_date = date('YmdHis', mktime($sum_date[3], $sum_date[4], $sum_date[5], $sum_date[1], $sum_date[2], $sum_date[0]));
+			$timeline_info->standard_date = $new_standard_date;
+			$this->insertTimelineInfo($timeline_info);
+		}
+
+		return $timeline_info;
 	}
 
 	function _setTimelineInfo(&$oModule)
@@ -185,7 +226,7 @@ class timelineController extends timeline
 		$oDocument = $oDocumentModel->getDocument($document_srl);
 		$document_srl = $oDocument->get('document_srl');
 		$module_srl = $oDocument->get('module_srl');
-		if ($oDocument->isExists() && $oTimelineModel->isFilterPassed($timeline_info->module_srl, $document_srl) && in_array($module_srl, $attach_info))
+		if ($oDocument->isExists() && in_array($module_srl, $attach_info) && ($oDocument->get('is_notice') == 'Y' || $oTimelineModel->isFilterPassed($timeline_info->module_srl, $document_srl)))
 		{
 			$origin_module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
 		}
@@ -347,6 +388,8 @@ class timelineController extends timeline
 		$args->tl_title = $timeline_info->title;
 		$args->tl_content = $timeline_info->content;
 		$args->tl_tags = $timeline_info->tags;
+		$args->tl_least_date = $oTimelineModel->getLeastDate($timeline_info->module_srl);
+		$args->tl_last_date = $oTimelineModel->getLastDate($timeline_info->module_srl);
 		$args->page = Context::get('page');
 		$args->list_count = $oModule->list_count;
 		$args->page_count = $oModule->page_count;
@@ -460,6 +503,33 @@ class timelineController extends timeline
 		Context::set('category_list', $category_list);
 		$oSecurity = new Security();
 		$oSecurity->encodeHTML('category_list.', 'category_list.childs.');
+
+		return new Object();
+	}
+
+	function _replaceNoticeList(&$oModule)
+	{
+		$notice_list = Context::get('notice_list');
+		$document_list = Context::get('document_list');
+		if (!$this->curr_module_info || (is_null($notice_list) && is_null($document_list)))
+		{
+			return new Object();
+		}
+
+		$oTimelineModel = getModel('timeline');
+		$timeline_info = $oTimelineModel->getTimelineInfo($this->curr_module_info->module_srl);
+		if ($timeline_info->notice != 'Y')
+		{
+			return new Object();
+		}
+
+		$args = new stdClass();
+		$args->module_srl = $timeline_info->attach_info;
+		$args->module_srl[] = $timeline_info->module_srl;
+
+		$oDocumentModel = getModel('document');
+		$notice_list = $oDocumentModel->getNoticeList($args, $oModule->columnList);
+		Context::set('notice_list', $notice_list->data);
 
 		return new Object();
 	}

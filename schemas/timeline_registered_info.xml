@@ -11,5 +11,9 @@
 	<column name="cond_voted_count" type="varchar" size="6" default="more" notnull="notnull" />
 	<column name="cond_blamed_count" type="varchar" size="6" default="more" notnull="notnull" />
 	<column name="cond_comment_count" type="varchar" size="6" default="more" notnull="notnull" />
+	<column name="notice" type="char" size="1" default="N" notnull="notnull" />
+	<column name="standard_date" type="date" index="idx_standard_date" />
+	<column name="limit_date" type="date" index="idx_limit_date" />
+	<column name="auto_renewal" type="char" size="1" default="N" notnull="notnull" />
 	<column name="regdate" type="date" index="idx_regdate" />
 </table>

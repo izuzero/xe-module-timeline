@@ -15,6 +15,10 @@
 		<column name="cond_voted_count" var="cond_voted_count" />
 		<column name="cond_blamed_count" var="cond_blamed_count" />
 		<column name="cond_comment_count" var="cond_comment_count" />
+		<column name="notice" var="notice" />
+		<column name="standard_date" var="standard_date" />
+		<column name="limit_date" var="limit_date" />
+		<column name="auto_renewal" var="auto_renewal" />
 		<column name="regdate" default="curdate()" />
 	</columns>
 </query>

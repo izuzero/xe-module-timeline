@@ -21,6 +21,12 @@
 	<item name="cmd_timeline_filter">
 		<value xml:lang="ko"><![CDATA[게시글 필터]]></value>
 	</item>
+	<item name="cmd_timeline_date_config">
+		<value xml:lang="ko"><![CDATA[기간 설정]]></value>
+	</item>
+	<item name="cmd_timeline_notice">
+		<value xml:lang="ko"><![CDATA[공지 게시글 통합]]></value>
+	</item>
 	<item name="cmd_timeline_excess">
 		<value xml:lang="ko"><![CDATA[초과]]></value>
 	</item>
@@ -45,6 +51,15 @@
 	<item name="cmd_timeline_comment_count">
 		<value xml:lang="ko"><![CDATA[댓글 수]]></value>
 	</item>
+	<item name="cmd_timeline_standard_date">
+		<value xml:lang="ko"><![CDATA[기준 날짜]]></value>
+	</item>
+	<item name="cmd_timeline_limit_date">
+		<value xml:lang="ko"><![CDATA[날짜 범위]]></value>
+	</item>
+	<item name="cmd_timeline_auto_renewal">
+		<value xml:lang="ko"><![CDATA[기준 날짜 갱신]]></value>
+	</item>
 	<item name="cmd_timeline_module_srl">
 		<value xml:lang="ko"><![CDATA[타임라인 게시판]]></value>
 	</item>
@@ -54,14 +69,26 @@
 	<item name="about_timeline">
 		<value xml:lang="ko"><![CDATA[여러 게시판의 글을 타임라인에서 모아 볼 수 있습니다.]]></value>
 	</item>
-	<item name="about_timeline_notice">
+	<item name="about_timeline_warning">
 		<value xml:lang="ko"><![CDATA[타임라인으로 등록한 게시판은 게시글 필터링을 적용할 경우 해당 게시판에 게시글을 등록할 때 문제가 발생할 수 있습니다. 특별한 문제가 없는 한 타임라인으로 등록한 게시판은 관리자만 게시글을 작성할 수 있도록 변경해주세요.]]></value>
+	</item>
+	<item name="about_timeline_notice">
+		<value xml:lang="ko"><![CDATA[게시글을 모을 대상에서 공지 게시글까지 포함할지 선택합니다.]]></value>
 	</item>
 	<item name="about_timeline_text">
 		<value xml:lang="ko"><![CDATA[설정한 값이 들어간 게시글만 불러옵니다. 입력하지 않으면 이 조건을 사용하지 않습니다.]]></value>
 	</item>
 	<item name="about_timeline_count">
 		<value xml:lang="ko"><![CDATA[설정한 조건에 부합하는 게시글만 불러옵니다. 0을 입력하면 이 조건을 사용하지 않습니다.]]></value>
+	</item>
+	<item name="about_timeline_standard_date">
+		<value xml:lang="ko"><![CDATA[설정한 날짜 이후의 게시글만 불러옵니다. 입력하지 않으면 이 조건을 사용하지 않습니다.]]></value>
+	</item>
+	<item name="about_timeline_limit_date">
+		<value xml:lang="ko"><![CDATA[기준 날짜로부터 설정한 날짜 범위의 게시글만 불러옵니다. 기준 날짜를 설정하지 않으면 지금으로부터 설정한 날짜 범위가 지나지 않은 게시글만 불러옵니다.]]></value>
+	</item>
+	<item name="about_timeline_auto_renewal">
+		<value xml:lang="ko"><![CDATA[현재 시간이 기준 날짜로부터의 날짜 범위를 지났다면 기준 날짜를 자동으로 갱신합니다.]]></value>
 	</item>
 	<item name="about_timeline_module_srl">
 		<value xml:lang="ko"><![CDATA[타임라인으로 지정할 게시판을 선택합니다.]]></value>

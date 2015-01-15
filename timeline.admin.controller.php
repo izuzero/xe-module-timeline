@@ -14,9 +14,19 @@ class timelineAdminController extends timeline
 
 	function procTimelineAdminInsert()
 	{
-		$oTimelineModel = getModel('timeline');
-		$oTimelineController = getController('timeline');
 		$args = Context::getRequestVars();
+		$keys = array('standard_date', 'limit_date');
+		foreach ($keys as $key)
+		{
+			list($year, $month, $day, $hour, $minute, $second) = $args->{$key};
+			$args->{$key} = sprintf('%04d%02d%02d%02d%02d%02d', $year, $month, $day, $hour, $minute, $second);
+			if (!intval($args->{$key}))
+			{
+				unset($args->{$key});
+			}
+		}
+
+		$oTimelineModel = getModel('timeline');
 		$timeline_info = $oTimelineModel->getTimelineInfo($args->module_srl);
 		if ($timeline_info)
 		{
@@ -27,6 +37,7 @@ class timelineAdminController extends timeline
 			$lang_code = 'success_registed';
 		}
 
+		$oTimelineController = getController('timeline');
 		$output = $oTimelineController->insertTimelineInfo($args);
 		if (!$output->toBool())
 		{

@@ -15,8 +15,12 @@ class timelineAdminView extends timeline
 		$timeline_info = $oTimelineModel->getTimelineInfo($module_srl);
 		if ($timeline_info)
 		{
+			$standard_date = sscanf($timeline_info->standard_date, '%04d%02d%02d%02d%02d%02d');
+			$limit_date = sscanf($timeline_info->limit_date, '%04d%02d%02d%02d%02d%02d');
 			Context::set('timeline_info', $timeline_info);
 			Context::set('attach_info', $timeline_info->attach_info);
+			Context::set('standard_date', $standard_date);
+			Context::set('limit_date', $limit_date);
 		}
 		else
 		{

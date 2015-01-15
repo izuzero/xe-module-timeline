@@ -69,6 +69,10 @@
 			<condition operation="more" column="comment_count" var="tl_more_comment_count" filter="number" pipe="and" />
 			<condition operation="less" column="comment_count" var="tl_less_comment_count" filter="number" pipe="and" />
 		</group>
+		<group pipe="and">
+			<condition operation="more" column="regdate" var="tl_least_date" filter="number" />
+			<condition operation="less" column="regdate" var="tl_last_date" filter="number" pipe="and" />
+		</group>
 	</conditions>
 	<navigation>
 		<index var="sort_index" default="list_order" order="order_type" />

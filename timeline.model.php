@@ -43,6 +43,18 @@ class timelineModel extends timeline
 			}
 		}
 
+		$least_date = $this->getLeastDate($timeline_info->module_srl);
+		$last_date = $this->getLastDate($timeline_info->module_srl);
+		$regdate = $oDocument->get('regdate');
+		if ($least_date && $regdate < $least_date)
+		{
+			return FALSE;
+		}
+		else if ($last_date && $regdate > $last_date)
+		{
+			return FALSE;
+		}
+
 		return TRUE;
 	}
 
@@ -114,26 +126,31 @@ class timelineModel extends timeline
 				$args->module_srl = $module_srl;
 				$output = executeQuery('timeline.getTimelineInfo', $args);
 				$timeline_info = $output->data;
-				if ($timeline_info)
-				{
-					$timeline_info->attach_info = $this->getAttachInfo($module_srl);
-				}
 				if ($oCacheHandler->isSupport())
 				{
 					$oCacheHandler->put($cache_key, $timeline_info);
 				}
 			}
+			if ($timeline_info)
+			{
+				$oTimelineController = getController('timeline');
+				$oTimelineController->renewalTimelineInfo($timeline_info);
+			}
 			$GLOBALS['__timeline__']['timeline_info'][$hash_id] = $timeline_info;
 		}
-		if ($timeline_info && count($column_list))
+		if ($timeline_info)
 		{
-			$temp = $timeline_info;
-			$timeline_info = new stdClass();
-			foreach ($temp as $key => $val)
+			$timeline_info->attach_info = $this->getAttachInfo($module_srl);
+			if (count($column_list))
 			{
-				if (in_array($key, $column_list))
+				$temp = $timeline_info;
+				$timeline_info = new stdClass();
+				foreach ($temp as $key => $val)
 				{
-					$timeline_info->{$key} = $val;
+					if (in_array($key, $column_list))
+					{
+						$timeline_info->{$key} = $val;
+					}
 				}
 			}
 		}
@@ -179,6 +196,60 @@ class timelineModel extends timeline
 		}
 
 		return $attach_info;
+	}
+
+	function getLeastDate($module_srl)
+	{
+		$timeline_info = $this->getTimelineInfo($module_srl);
+		if (!$timeline_info)
+		{
+			return NULL;
+		}
+
+		$limit_date = $timeline_info->limit_date;
+		$standard_date = $timeline_info->standard_date;
+		if ($standard_date)
+		{
+			$least_date = $standard_date;
+		}
+		else if ($limit_date)
+		{
+			$sum_date = array();
+			$now_date = sscanf(date('YmdHis'), '%04d%02d%02d%02d%02d%02d');
+			$limit_date = sscanf($limit_date, '%04d%02d%02d%02d%02d%02d');
+			for ($i = 0; $i < 6; $i++)
+			{
+				$sum_date[$i] = $now_date[$i] - $limit_date[$i];
+			}
+
+			$least_date = date('YmdHis', mktime($sum_date[3], $sum_date[4], $sum_date[5], $sum_date[1], $sum_date[2], $sum_date[0]));
+		}
+
+		return $least_date;
+	}
+
+	function getLastDate($module_srl)
+	{
+		$timeline_info = $this->getTimelineInfo($module_srl);
+		if (!$timeline_info)
+		{
+			return NULL;
+		}
+
+		$limit_date = sscanf($timeline_info->limit_date, '%04d%02d%02d%02d%02d%02d');
+		$standard_date = sscanf($timeline_info->standard_date, '%04d%02d%02d%02d%02d%02d');
+		if ($standard_date && $limit_date)
+		{
+			$sum_date = array();
+			for ($i = 0; $i < 6; $i++)
+			{
+				$sum_date[$i] = $standard_date[$i] + $limit_date[$i];
+			}
+
+			$last_date = date('YmdHis', mktime($sum_date[3], $sum_date[4], $sum_date[5], $sum_date[1], $sum_date[2], $sum_date[0]));
+		}
+
+		return $last_date;
 	}
 
 	function getDocumentList($obj, $except_notice = FALSE, $load_extra_vars = TRUE, $column_list = array())
@@ -343,6 +414,8 @@ class timelineModel extends timeline
 		$args->tl_title = $opts->tl_title ? $opts->tl_title : NULL;
 		$args->tl_content = $opts->tl_content ? $opts->tl_content : NULL;
 		$args->tl_tags = $opts->tl_tags ? $opts->tl_tags : NULL;
+		$args->tl_least_date = $opts->tl_least_date ? $opts->tl_least_date : NULL;
+		$args->tl_last_date = $opts->tl_last_date ? $opts->tl_last_date : NULL;
 		$args->start_date = $opts->start_date ? $opts->start_date : NULL;
 		$args->end_date = $opts->end_date ? $opts->end_date : NULL;
 		$args->page = $opts->page ? $opts->page : 1;
@@ -574,10 +647,32 @@ class timelineModel extends timeline
 					$division_args = new stdClass();
 					$division_args->module_srl = $args->module_srl;
 					$division_args->exclude_module_srl = $args->exclude_module_srl;
+					$division_args->member_srl = $args->member_srl;
 					$division_args->list_count = 1;
 					$division_args->sort_index = $args->sort_index;
 					$division_args->order_type = $args->order_type;
-					$division_args->statusList = $args->status_list;
+					$division_args->status_list = $args->status_list;
+					$division_args->tl_title = $args->tl_title;
+					$division_args->tl_content = $args->tl_content;
+					$division_args->tl_tags = $args->tl_tags;
+					$division_args->tl_excess_readed_count = $args->tl_excess_readed_count;
+					$division_args->tl_below_readed_count = $args->tl_below_readed_count;
+					$division_args->tl_more_readed_count = $args->tl_more_readed_count;
+					$division_args->tl_less_readed_count = $args->tl_less_readed_count;
+					$division_args->tl_excess_voted_count = $args->tl_excess_voted_count;
+					$division_args->tl_below_voted_count = $args->tl_below_voted_count;
+					$division_args->tl_more_voted_count = $args->tl_more_voted_count;
+					$division_args->tl_less_voted_count = $args->tl_less_voted_count;
+					$division_args->tl_excess_blamed_count = $args->tl_excess_blamed_count;
+					$division_args->tl_below_blamed_count = $args->tl_below_blamed_count;
+					$division_args->tl_more_blamed_count = $args->tl_more_blamed_count;
+					$division_args->tl_less_blamed_count = $args->tl_less_blamed_count;
+					$division_args->tl_excess_comment_count = $args->tl_excess_comment_count;
+					$division_args->tl_below_comment_count = $args->tl_below_comment_count;
+					$division_args->tl_more_comment_count = $args->tl_more_comment_count;
+					$division_args->tl_less_comment_count = $args->tl_less_comment_count;
+					$division_args->tl_least_date = $args->tl_least_date;
+					$division_args->tl_last_date = $args->tl_last_date;
 					$output = executeQuery($divisionSqlID, $division_args, array('list_order'));
 					if ($output->data)
 					{
@@ -594,11 +689,33 @@ class timelineModel extends timeline
 					$last_division_args = new stdClass();
 					$last_division_args->module_srl = $args->module_srl;
 					$last_division_args->exclude_module_srl = $args->exclude_module_srl;
+					$last_division_args->member_srl = $args->member_srl;
 					$last_division_args->list_count = 1;
 					$last_division_args->sort_index = $args->sort_index;
 					$last_division_args->order_type = $args->order_type;
 					$last_division_args->list_order = $division;
 					$last_division_args->page = 5001;
+					$last_division_args->tl_title = $args->tl_title;
+					$last_division_args->tl_content = $args->tl_content;
+					$last_division_args->tl_tags = $args->tl_tags;
+					$last_division_args->tl_excess_readed_count = $args->tl_excess_readed_count;
+					$last_division_args->tl_below_readed_count = $args->tl_below_readed_count;
+					$last_division_args->tl_more_readed_count = $args->tl_more_readed_count;
+					$last_division_args->tl_less_readed_count = $args->tl_less_readed_count;
+					$last_division_args->tl_excess_voted_count = $args->tl_excess_voted_count;
+					$last_division_args->tl_below_voted_count = $args->tl_below_voted_count;
+					$last_division_args->tl_more_voted_count = $args->tl_more_voted_count;
+					$last_division_args->tl_less_voted_count = $args->tl_less_voted_count;
+					$last_division_args->tl_excess_blamed_count = $args->tl_excess_blamed_count;
+					$last_division_args->tl_below_blamed_count = $args->tl_below_blamed_count;
+					$last_division_args->tl_more_blamed_count = $args->tl_more_blamed_count;
+					$last_division_args->tl_less_blamed_count = $args->tl_less_blamed_count;
+					$last_division_args->tl_excess_comment_count = $args->tl_excess_comment_count;
+					$last_division_args->tl_below_comment_count = $args->tl_below_comment_count;
+					$last_division_args->tl_more_comment_count = $args->tl_more_comment_count;
+					$last_division_args->tl_less_comment_count = $args->tl_less_comment_count;
+					$last_division_args->tl_least_date = $args->tl_least_date;
+					$last_division_args->tl_last_date = $args->tl_last_date;
 					$output = executeQuery($divisionSqlID, $last_division_args, array('list_order'));
 					if($output->data)
 					{
@@ -611,7 +728,29 @@ class timelineModel extends timeline
 					$last_division_args = new stdClass();
 					$last_division_args->module_srl = $args->module_srl;
 					$last_division_args->exclude_module_srl = $args->exclude_module_srl;
+					$last_division_args->member_srl = $args->member_srl;
 					$last_division_args->list_order = $last_division;
+					$last_division_args->tl_title = $args->tl_title;
+					$last_division_args->tl_content = $args->tl_content;
+					$last_division_args->tl_tags = $args->tl_tags;
+					$last_division_args->tl_excess_readed_count = $args->tl_excess_readed_count;
+					$last_division_args->tl_below_readed_count = $args->tl_below_readed_count;
+					$last_division_args->tl_more_readed_count = $args->tl_more_readed_count;
+					$last_division_args->tl_less_readed_count = $args->tl_less_readed_count;
+					$last_division_args->tl_excess_voted_count = $args->tl_excess_voted_count;
+					$last_division_args->tl_below_voted_count = $args->tl_below_voted_count;
+					$last_division_args->tl_more_voted_count = $args->tl_more_voted_count;
+					$last_division_args->tl_less_voted_count = $args->tl_less_voted_count;
+					$last_division_args->tl_excess_blamed_count = $args->tl_excess_blamed_count;
+					$last_division_args->tl_below_blamed_count = $args->tl_below_blamed_count;
+					$last_division_args->tl_more_blamed_count = $args->tl_more_blamed_count;
+					$last_division_args->tl_less_blamed_count = $args->tl_less_blamed_count;
+					$last_division_args->tl_excess_comment_count = $args->tl_excess_comment_count;
+					$last_division_args->tl_below_comment_count = $args->tl_below_comment_count;
+					$last_division_args->tl_more_comment_count = $args->tl_more_comment_count;
+					$last_division_args->tl_less_comment_count = $args->tl_less_comment_count;
+					$last_division_args->tl_least_date = $args->tl_least_date;
+					$last_division_args->tl_last_date = $args->tl_last_date;
 					$output = executeQuery('timeline.getDocumentDivisionCount', $last_division_args);
 					if ($output->data->count < 1)
 					{
