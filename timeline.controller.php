@@ -340,7 +340,7 @@ class timelineController extends timeline
 		$oTimelineModel = getModel('timeline');
 		$timeline_info = $oTimelineModel->getTimelineInfo($this->curr_module_info->module_srl);
 		$attach_info = $timeline_info->attach_info;
-		$attach_info[] = $this->curr_module_info->module_srl;
+		$attach_info[] = $timeline_info->module_srl;
 
 		$args = new stdClass();
 		$args->module_srl = $attach_info;
