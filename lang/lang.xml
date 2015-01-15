@@ -13,7 +13,7 @@
 		<value xml:lang="ko"><![CDATA[타임라인 등록]]></value>
 	</item>
 	<item name="cmd_timeline_regdate">
-		<value xml:lang="ko"><![CDATA[타임라인 등록일]]></value>
+		<value xml:lang="ko"><![CDATA[타임라인 수정일]]></value>
 	</item>
 	<item name="cmd_timeline_check_all">
 		<value xml:lang="ko"><![CDATA[전체 선택]]></value>
