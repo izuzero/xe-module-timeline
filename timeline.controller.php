@@ -226,9 +226,19 @@ class timelineController extends timeline
 		$oDocument = $oDocumentModel->getDocument($document_srl);
 		$document_srl = $oDocument->get('document_srl');
 		$module_srl = $oDocument->get('module_srl');
-		if ($oDocument->isExists() && in_array($module_srl, $attach_info) && ($oDocument->get('is_notice') == 'Y' || $oTimelineModel->isFilterPassed($timeline_info->module_srl, $document_srl)))
+		if ($oDocument->isExists())
 		{
-			$origin_module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
+			$attach_info = $timeline_info->attach_info;
+			if (in_array($module_srl, $attach_info) && $oDocument->get('is_notice') == 'Y' && $timeline_info->notice != 'Y')
+			{
+				return new Object();
+			}
+
+			$attach_info[] = $timeline_info->module_srl;
+			if (in_array($module_srl, $attach_info) && ($oDocument->get('is_notice') == 'Y' || $oTimelineModel->isFilterPassed($timeline_info->module_srl, $document_srl)))
+			{
+				$origin_module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
+			}
 		}
 
 		$oCommentModel = getModel('comment');
