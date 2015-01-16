@@ -254,7 +254,7 @@ class timelineModel extends timeline
 		}
 		else
 		{
-			$group_by_query = array('document.getDocumentListWithinComment', 'document.getDocumentListWithinTag', 'document.getDocumentListWithinExtraVars');
+			$group_by_query = array('timeline.getDocumentListWithinComment', 'timeline.getDocumentListWithinTag', 'timeline.getDocumentListWithinExtraVars');
 			if (in_array($query_id, $group_by_query))
 			{
 				$group_args = clone($args);
@@ -633,35 +633,8 @@ class timelineModel extends timeline
 				}
 				if (!$division)
 				{
-					$division_args = new stdClass();
-					$division_args->module_srl = $args->module_srl;
-					$division_args->exclude_module_srl = $args->exclude_module_srl;
-					$division_args->member_srl = $args->member_srl;
+					$division_args = clone($args);
 					$division_args->list_count = 1;
-					$division_args->sort_index = $args->sort_index;
-					$division_args->order_type = $args->order_type;
-					$division_args->status_list = $args->status_list;
-					$division_args->tl_title = $args->tl_title;
-					$division_args->tl_content = $args->tl_content;
-					$division_args->tl_tags = $args->tl_tags;
-					$division_args->tl_excess_readed_count = $args->tl_excess_readed_count;
-					$division_args->tl_below_readed_count = $args->tl_below_readed_count;
-					$division_args->tl_more_readed_count = $args->tl_more_readed_count;
-					$division_args->tl_less_readed_count = $args->tl_less_readed_count;
-					$division_args->tl_excess_voted_count = $args->tl_excess_voted_count;
-					$division_args->tl_below_voted_count = $args->tl_below_voted_count;
-					$division_args->tl_more_voted_count = $args->tl_more_voted_count;
-					$division_args->tl_less_voted_count = $args->tl_less_voted_count;
-					$division_args->tl_excess_blamed_count = $args->tl_excess_blamed_count;
-					$division_args->tl_below_blamed_count = $args->tl_below_blamed_count;
-					$division_args->tl_more_blamed_count = $args->tl_more_blamed_count;
-					$division_args->tl_less_blamed_count = $args->tl_less_blamed_count;
-					$division_args->tl_excess_comment_count = $args->tl_excess_comment_count;
-					$division_args->tl_below_comment_count = $args->tl_below_comment_count;
-					$division_args->tl_more_comment_count = $args->tl_more_comment_count;
-					$division_args->tl_less_comment_count = $args->tl_less_comment_count;
-					$division_args->tl_least_date = $args->tl_least_date;
-					$division_args->tl_last_date = $args->tl_last_date;
 					$output = executeQuery($divisionSqlID, $division_args, array('list_order'));
 					if ($output->data)
 					{
@@ -675,36 +648,9 @@ class timelineModel extends timeline
 				$last_division = intval(Context::get('last_division'));
 				if (!$last_division)
 				{
-					$last_division_args = new stdClass();
-					$last_division_args->module_srl = $args->module_srl;
-					$last_division_args->exclude_module_srl = $args->exclude_module_srl;
-					$last_division_args->member_srl = $args->member_srl;
+					$last_division_args = clone($args);
 					$last_division_args->list_count = 1;
-					$last_division_args->sort_index = $args->sort_index;
-					$last_division_args->order_type = $args->order_type;
-					$last_division_args->list_order = $division;
 					$last_division_args->page = 5001;
-					$last_division_args->tl_title = $args->tl_title;
-					$last_division_args->tl_content = $args->tl_content;
-					$last_division_args->tl_tags = $args->tl_tags;
-					$last_division_args->tl_excess_readed_count = $args->tl_excess_readed_count;
-					$last_division_args->tl_below_readed_count = $args->tl_below_readed_count;
-					$last_division_args->tl_more_readed_count = $args->tl_more_readed_count;
-					$last_division_args->tl_less_readed_count = $args->tl_less_readed_count;
-					$last_division_args->tl_excess_voted_count = $args->tl_excess_voted_count;
-					$last_division_args->tl_below_voted_count = $args->tl_below_voted_count;
-					$last_division_args->tl_more_voted_count = $args->tl_more_voted_count;
-					$last_division_args->tl_less_voted_count = $args->tl_less_voted_count;
-					$last_division_args->tl_excess_blamed_count = $args->tl_excess_blamed_count;
-					$last_division_args->tl_below_blamed_count = $args->tl_below_blamed_count;
-					$last_division_args->tl_more_blamed_count = $args->tl_more_blamed_count;
-					$last_division_args->tl_less_blamed_count = $args->tl_less_blamed_count;
-					$last_division_args->tl_excess_comment_count = $args->tl_excess_comment_count;
-					$last_division_args->tl_below_comment_count = $args->tl_below_comment_count;
-					$last_division_args->tl_more_comment_count = $args->tl_more_comment_count;
-					$last_division_args->tl_less_comment_count = $args->tl_less_comment_count;
-					$last_division_args->tl_least_date = $args->tl_least_date;
-					$last_division_args->tl_last_date = $args->tl_last_date;
 					$output = executeQuery($divisionSqlID, $last_division_args, array('list_order'));
 					if($output->data)
 					{
@@ -714,32 +660,8 @@ class timelineModel extends timeline
 				}
 				if ($last_division)
 				{
-					$last_division_args = new stdClass();
-					$last_division_args->module_srl = $args->module_srl;
-					$last_division_args->exclude_module_srl = $args->exclude_module_srl;
-					$last_division_args->member_srl = $args->member_srl;
+					$last_division_args = clone($args);
 					$last_division_args->list_order = $last_division;
-					$last_division_args->tl_title = $args->tl_title;
-					$last_division_args->tl_content = $args->tl_content;
-					$last_division_args->tl_tags = $args->tl_tags;
-					$last_division_args->tl_excess_readed_count = $args->tl_excess_readed_count;
-					$last_division_args->tl_below_readed_count = $args->tl_below_readed_count;
-					$last_division_args->tl_more_readed_count = $args->tl_more_readed_count;
-					$last_division_args->tl_less_readed_count = $args->tl_less_readed_count;
-					$last_division_args->tl_excess_voted_count = $args->tl_excess_voted_count;
-					$last_division_args->tl_below_voted_count = $args->tl_below_voted_count;
-					$last_division_args->tl_more_voted_count = $args->tl_more_voted_count;
-					$last_division_args->tl_less_voted_count = $args->tl_less_voted_count;
-					$last_division_args->tl_excess_blamed_count = $args->tl_excess_blamed_count;
-					$last_division_args->tl_below_blamed_count = $args->tl_below_blamed_count;
-					$last_division_args->tl_more_blamed_count = $args->tl_more_blamed_count;
-					$last_division_args->tl_less_blamed_count = $args->tl_less_blamed_count;
-					$last_division_args->tl_excess_comment_count = $args->tl_excess_comment_count;
-					$last_division_args->tl_below_comment_count = $args->tl_below_comment_count;
-					$last_division_args->tl_more_comment_count = $args->tl_more_comment_count;
-					$last_division_args->tl_less_comment_count = $args->tl_less_comment_count;
-					$last_division_args->tl_least_date = $args->tl_least_date;
-					$last_division_args->tl_last_date = $args->tl_last_date;
 					$output = executeQuery('timeline.getDocumentDivisionCount', $last_division_args);
 					if ($output->data->count < 1)
 					{
