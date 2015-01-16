@@ -33,7 +33,7 @@ class timelineModel extends timeline
 			$key = $timeline_info->{'cond_' . $filter};
 			$val = $timeline_info->{$filter};
 			$if_val = $oDocument->get($filter);
-			if ($filter == 'blamed_count')
+			if ($filter === $tl_filter[2])
 			{
 				$if_val *= -1;
 			}
