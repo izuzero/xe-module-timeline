@@ -116,12 +116,12 @@
 		<div class="x_control-group">
 			<label class="x_control-label">{$lang->cmd_timeline_standard_date}</label>
 			<div class="x_controls">
-				<input type="number" name="standard_date[]" value="{$standard_date[0]}"|cond="$standard_date[0]" /> {$lang->unit_year}
-				<input type="number" name="standard_date[]" value="{$standard_date[1]}"|cond="$standard_date[1]" /> {$lang->unit_month}
-				<input type="number" name="standard_date[]" value="{$standard_date[2]}"|cond="$standard_date[2]" /> {$lang->unit_day}
-				<input type="number" name="standard_date[]" value="{$standard_date[3]}"|cond="$standard_date[3]" /> {$lang->unit_hour}
-				<input type="number" name="standard_date[]" value="{$standard_date[4]}"|cond="$standard_date[4]" /> {$lang->unit_min}
-				<input type="number" name="standard_date[]" value="{$standard_date[5]}"|cond="$standard_date[5]" /> {$lang->unit_sec}
+				<input type="number" name="standard_date[]" value="{$standard_date[0]}"|cond="$standard_date[0]" min="0" max="9999" /> {$lang->unit_year}
+				<input type="number" name="standard_date[]" value="{$standard_date[1]}"|cond="$standard_date[1]" min="1" max="12" /> {$lang->unit_month}
+				<input type="number" name="standard_date[]" value="{$standard_date[2]}"|cond="$standard_date[2]" min="1" max="31" /> {$lang->unit_day}
+				<input type="number" name="standard_date[]" value="{$standard_date[3]}"|cond="$standard_date[3]" min="0" max="24" /> {$lang->unit_hour}
+				<input type="number" name="standard_date[]" value="{$standard_date[4]}"|cond="$standard_date[4]" min="0" max="59" /> {$lang->unit_min}
+				<input type="number" name="standard_date[]" value="{$standard_date[5]}"|cond="$standard_date[5]" min="0" max="59" /> {$lang->unit_sec}
 				<a href="#about_standard_date" class="x_icon-question-sign" data-toggle="#about_standard_date">{$lang->help}</a>
 				<p id="about_standard_date" class="x_help-block" hidden="hidden">{$lang->about_timeline_standard_date}</p>
 			</div>
@@ -129,12 +129,12 @@
 		<div class="x_control-group">
 			<label class="x_control-label">{$lang->cmd_timeline_limit_date}</label>
 			<div class="x_controls">
-				<input type="number" name="limit_date[]" value="{$limit_date[0]}"|cond="$limit_date[0]" /> {$lang->unit_year}
-				<input type="number" name="limit_date[]" value="{$limit_date[1]}"|cond="$limit_date[1]" /> {$lang->unit_month}
-				<input type="number" name="limit_date[]" value="{$limit_date[2]}"|cond="$limit_date[2]" /> {$lang->unit_day}
-				<input type="number" name="limit_date[]" value="{$limit_date[3]}"|cond="$limit_date[3]" /> {$lang->unit_hour}
-				<input type="number" name="limit_date[]" value="{$limit_date[4]}"|cond="$limit_date[4]" /> {$lang->unit_min}
-				<input type="number" name="limit_date[]" value="{$limit_date[5]}"|cond="$limit_date[5]" /> {$lang->unit_sec}
+				<input type="number" name="limit_date[]" value="{$limit_date[0]}"|cond="$limit_date[0]" min="0" max="9999" /> {$lang->unit_year}
+				<input type="number" name="limit_date[]" value="{$limit_date[1]}"|cond="$limit_date[1]" min="0" max="99" /> {$lang->unit_month}
+				<input type="number" name="limit_date[]" value="{$limit_date[2]}"|cond="$limit_date[2]" min="0" max="99" /> {$lang->unit_day}
+				<input type="number" name="limit_date[]" value="{$limit_date[3]}"|cond="$limit_date[3]" min="0" max="99" /> {$lang->unit_hour}
+				<input type="number" name="limit_date[]" value="{$limit_date[4]}"|cond="$limit_date[4]" min="0" max="99" /> {$lang->unit_min}
+				<input type="number" name="limit_date[]" value="{$limit_date[5]}"|cond="$limit_date[5]" min="0" max="99" /> {$lang->unit_sec}
 				<a href="#about_limit_date" class="x_icon-question-sign" data-toggle="#about_limit_date">{$lang->help}</a>
 				<p id="about_limit_date" class="x_help-block" hidden="hidden">{$lang->about_timeline_limit_date}</p>
 			</div>

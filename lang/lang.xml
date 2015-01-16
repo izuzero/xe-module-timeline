@@ -99,6 +99,9 @@
 	<item name="msg_timeline_no_module_srl">
 		<value xml:lang="ko"><![CDATA[타임라인으로 등록할 모듈시리얼번호가 없습니다.]]></value>
 	</item>
+	<item name="msg_timeline_invalid_date">
+		<value xml:lang="ko"><![CDATA[잘못된 날짜입니다.]]></value>
+	</item>
 	<item name="msg_timeline_no_instance">
 		<value xml:lang="ko"><![CDATA[등록된 타임라인이 없습니다.]]></value>
 	</item>

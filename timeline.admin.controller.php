@@ -20,10 +20,14 @@ class timelineAdminController extends timeline
 		{
 			list($year, $month, $day, $hour, $minute, $second) = $args->{$key};
 			$args->{$key} = sprintf('%04d%02d%02d%02d%02d%02d', $year, $month, $day, $hour, $minute, $second);
-			if (!intval($args->{$key}))
+			if (!(intval($args->{$key}) && $year < 10000 && $month < 100 && $day < 100 && $hour < 100 && $minute < 100 && $second < 100))
 			{
 				unset($args->{$key});
 			}
+		}
+		if ($args->standard_date && !strtotime($args->standard_date))
+		{
+			return new Object(-1, 'msg_timeline_invalid_date');
 		}
 
 		$oTimelineModel = getModel('timeline');

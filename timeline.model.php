@@ -198,6 +198,24 @@ class timelineModel extends timeline
 		return $attach_info;
 	}
 
+	function getStrTime($format, $sign = '+')
+	{
+		$stack = sscanf($format, '%04d%02d%02d%02d%02d%02d');
+		if (!$stack)
+		{
+			return NULL;
+		}
+
+		list($year, $month, $day, $hour, $minute, $second) = $stack;
+
+		$str_time = sprintf(
+			'%s%d years %s%d months %s%d days %s%d hours %s%d minutes %s%d seconds',
+			$sign, $year, $sign, $month, $sign, $day, $sign, $hour, $sign, $minute, $sign, $second
+		);
+
+		return $str_time;
+	}
+
 	function getLeastDate($module_srl)
 	{
 		$timeline_info = $this->getTimelineInfo($module_srl);
@@ -207,16 +225,15 @@ class timelineModel extends timeline
 		}
 
 		$least_date = NULL;
-		$limit_date = $timeline_info->limit_date;
 		$standard_date = $timeline_info->standard_date;
+		$limit_date = $this->getStrTime($timeline_info->limit_date, '-');
 		if ($standard_date)
 		{
 			$least_date = $standard_date;
 		}
-		else if ($limit_date)
+		else if (isset($limit_date))
 		{
-			$now_date = date('YmdHis');
-			$least_date = zdate($now_date - $limit_date, 'YmdHis');
+			$least_date = date('YmdHis', strtotime($limit_date));
 		}
 
 		return $least_date;
@@ -231,11 +248,11 @@ class timelineModel extends timeline
 		}
 
 		$last_date = NULL;
-		$limit_date = $timeline_info->limit_date;
-		$standard_date = $timeline_info->standard_date;
-		if ($standard_date && $limit_date)
+		$standard_date = strtotime($timeline_info->standard_date);
+		$limit_date = $this->getStrTime($timeline_info->limit_date);
+		if ($standard_date !== FALSE && isset($limit_date))
 		{
-			$last_date = zdate($standard_date + $limit_date, 'YmdHis');
+			$last_date = date('YmdHis', strtotime($limit_date, $standard_date));
 		}
 
 		return $last_date;

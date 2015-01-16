@@ -124,23 +124,24 @@ class timelineController extends timeline
 
 	function renewalTimelineInfo(&$timeline_info)
 	{
-		$standard_date = $timeline_info->standard_date;
-		$limit_date = $timeline_info->limit_date;
-		$is_renewal = ($timeline_info->auto_renewal === 'Y');
-		if (!($standard_date && $limit_date && $is_renewal))
+		$oTimelineModel = getModel('timeline');
+		$standard_date = strtotime($timeline_info->standard_date);
+		$limit_date = $oTimelineModel->getStrTime($timeline_info->limit_date);
+		if ($standard_date === FALSE || is_null($limit_date) || $timeline_info->auto_renewal != 'Y')
 		{
 			return $timeline_info;
 		}
 
-		$now_date = date('YmdHis');
-		$repeat = floor(($now_date - $standard_date) / $limit_date);
+		$now_date = time();
+		$diff_date = strtotime($limit_date, $standard_date) - $standard_date;
+		$repeat = floor(($now_date - $standard_date) / $diff_date);
 		if (!$repeat)
 		{
 			return $timeline_info;
 		}
 
-		$last_date = zdate($standard_date + ($limit_date * $repeat), 'YmdHis');
-		$timeline_info->standard_date = $last_date;
+		$last_date = $standard_date + ($diff_date * $repeat);
+		$timeline_info->standard_date = date('YmdHis', $last_date);
 		$this->insertTimelineInfo($timeline_info);
 
 		return $timeline_info;
