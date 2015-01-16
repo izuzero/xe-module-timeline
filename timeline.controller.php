@@ -201,9 +201,6 @@ class timelineController extends timeline
 			return new Object();
 		}
 
-		$attach_info = $timeline_info->attach_info;
-		$attach_info[] = $timeline_info->module_srl;
-
 		$oDocumentModel = getModel('document');
 		$oDocument = $oDocumentModel->getDocument($document_srl);
 		$document_srl = $oDocument->get('document_srl');
