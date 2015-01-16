@@ -206,6 +206,7 @@ class timelineModel extends timeline
 			return NULL;
 		}
 
+		$least_date = NULL;
 		$limit_date = $timeline_info->limit_date;
 		$standard_date = $timeline_info->standard_date;
 		if ($standard_date)
@@ -214,15 +215,8 @@ class timelineModel extends timeline
 		}
 		else if ($limit_date)
 		{
-			$sum_date = array();
-			$now_date = sscanf(date('YmdHis'), '%04d%02d%02d%02d%02d%02d');
-			$limit_date = sscanf($limit_date, '%04d%02d%02d%02d%02d%02d');
-			for ($i = 0; $i < 6; $i++)
-			{
-				$sum_date[$i] = $now_date[$i] - $limit_date[$i];
-			}
-
-			$least_date = date('YmdHis', mktime($sum_date[3], $sum_date[4], $sum_date[5], $sum_date[1], $sum_date[2], $sum_date[0]));
+			$now_date = date('YmdHis');
+			$least_date = zdate($now_date - $limit_date, 'YmdHis');
 		}
 
 		return $least_date;
@@ -236,17 +230,12 @@ class timelineModel extends timeline
 			return NULL;
 		}
 
-		$limit_date = sscanf($timeline_info->limit_date, '%04d%02d%02d%02d%02d%02d');
-		$standard_date = sscanf($timeline_info->standard_date, '%04d%02d%02d%02d%02d%02d');
+		$last_date = NULL;
+		$limit_date = $timeline_info->limit_date;
+		$standard_date = $timeline_info->standard_date;
 		if ($standard_date && $limit_date)
 		{
-			$sum_date = array();
-			for ($i = 0; $i < 6; $i++)
-			{
-				$sum_date[$i] = $standard_date[$i] + $limit_date[$i];
-			}
-
-			$last_date = date('YmdHis', mktime($sum_date[3], $sum_date[4], $sum_date[5], $sum_date[1], $sum_date[2], $sum_date[0]));
+			$last_date = zdate($standard_date + $limit_date, 'YmdHis');
 		}
 
 		return $last_date;

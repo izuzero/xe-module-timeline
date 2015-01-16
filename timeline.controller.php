@@ -124,42 +124,24 @@ class timelineController extends timeline
 
 	function renewalTimelineInfo(&$timeline_info)
 	{
-		$limit_date = sscanf($timeline_info->limit_date, '%04d%02d%02d%02d%02d%02d');
-		$standard_date = sscanf($timeline_info->standard_date, '%04d%02d%02d%02d%02d%02d');
+		$standard_date = $timeline_info->standard_date;
+		$limit_date = $timeline_info->limit_date;
 		$is_renewal = ($timeline_info->auto_renewal === 'Y');
 		if (!($standard_date && $limit_date && $is_renewal))
 		{
 			return $timeline_info;
 		}
 
-		$sum_date = array();
-		for ($i = 0; $i < 6; $i++)
-		{
-			$sum_date[$i] = $standard_date[$i] + $limit_date[$i];
-		}
-
 		$now_date = date('YmdHis');
-		$last_date = date('YmdHis', mktime($sum_date[3], $sum_date[4], $sum_date[5], $sum_date[1], $sum_date[2], $sum_date[0]));
-		if ($last_date < $now_date)
+		$repeat = floor(($now_date - $standard_date) / $limit_date);
+		if (!$repeat)
 		{
-			while ($last_date < $now_date)
-			{
-				for ($i = 0; $i < 6; $i++)
-				{
-					$sum_date[$i] += $limit_date[$i];
-				}
-
-				$last_date = date('YmdHis', mktime($sum_date[3], $sum_date[4], $sum_date[5], $sum_date[1], $sum_date[2], $sum_date[0]));
-			}
-			for ($i = 0; $i < 6; $i++)
-			{
-				$sum_date[$i] -= $limit_date[$i];
-			}
-
-			$new_standard_date = date('YmdHis', mktime($sum_date[3], $sum_date[4], $sum_date[5], $sum_date[1], $sum_date[2], $sum_date[0]));
-			$timeline_info->standard_date = $new_standard_date;
-			$this->insertTimelineInfo($timeline_info);
+			return $timeline_info;
 		}
+
+		$last_date = zdate($standard_date + ($limit_date * $repeat), 'YmdHis');
+		$timeline_info->standard_date = $last_date;
+		$this->insertTimelineInfo($timeline_info);
 
 		return $timeline_info;
 	}
