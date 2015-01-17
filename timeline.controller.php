@@ -147,27 +147,29 @@ class timelineController extends timeline
 		return $timeline_info;
 	}
 
-	function _setTimelineInfo(&$oModule)
+	function _setTimelineInfo(&$module_info)
 	{
-		if (!$this->curr_module_info)
+		$curr_module_info = $this->curr_module_info;
+		if (!$curr_module_info)
 		{
 			return new Object();
 		}
 
-		$oModuleModel = getModel('module');
 		$oTimelineModel = getModel('timeline');
-		$timeline_info = $oTimelineModel->getTimelineInfo($this->curr_module_info->module_srl);
+		$timeline_info = $oTimelineModel->getTimelineInfo($curr_module_info->module_srl);
 		$attach_info = $timeline_info->attach_info;
 		$attach_info[] = $timeline_info->module_srl;
+
+		$oModuleModel = getModel('module');
 		$modules_info = array();
 		foreach ($attach_info as $item)
 		{
-			if (is_null($modules_info[$item]))
+			if (!isset($modules_info[$item]))
 			{
-				$module_info = $oModuleModel->getModuleInfoByModuleSrl($item);
-				if ($module_info)
+				$target_module_info = $oModuleModel->getModuleInfoByModuleSrl($item);
+				if ($target_module_info)
 				{
-					$modules_info[$item] = $module_info;
+					$modules_info[$item] = $target_module_info;
 				}
 			}
 		}
