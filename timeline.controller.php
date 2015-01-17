@@ -423,9 +423,11 @@ class timelineController extends timeline
 	 */
 	function _rollbackBeforeModuleInfo(&$oModule)
 	{
-		// 타임라인 게시판 정보가 없는 경우
-		$module_info = $this->curr_module_info;
-		if (!$module_info)
+		if ($this->curr_module_info)
+		{
+			$module_info = clone($this->curr_module_info);
+		}
+		else
 		{
 			return new Object();
 		}
@@ -674,17 +676,18 @@ class timelineController extends timeline
 	 */
 	function _replaceCategoryList(&$oModule)
 	{
-		$category_list = Context::get('category_list');
-		// 타임라인 게시판 정보가 없거나 템플릿으로 넘어온 카테고리 목록이 없거나 카테고리를 사용하지 않는 게시판일 경우
-		if (!$this->curr_module_info || is_null($category_list) || $oModule->module_info->use_category != 'Y')
+		// 타임라인 게시판 정보가 없거나 카테고리를 사용하지 않는 게시판일 경우
+		if (!$this->curr_module_info || $oModule->module_info->use_category != 'Y')
 		{
 			return new Object();
 		}
 
 		$oDocumentModel = getModel('document');
 		$oTimelineModel = getModel('timeline');
-		$timeline_info = $oTimelineModel->getTimelineInfo($oModule->module_srl);
+		$timeline_info = $oTimelineModel->getTimelineInfo($this->curr_module_info->module_srl);
 		$attach_info = $timeline_info->attach_info;
+		$attach_info[] = $timeline_info->module_srl;
+		$category_list = array();
 		// 카테고리 목록 불러오기
 		foreach ($attach_info as $item)
 		{
