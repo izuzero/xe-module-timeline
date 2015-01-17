@@ -230,7 +230,7 @@ class timelineController extends timeline
 
 		$this->curr_module_info = $curr_module_info;
 		$this->origin_module_info = $origin_module_info;
-		if ($origin_module_info && !isCrawler())
+		if ($origin_module_info && $timeline_info->replace != 'Y' && !isCrawler())
 		{
 			Context::set('mid', $oModule->mid = $origin_module_info->mid);
 		}

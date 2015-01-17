@@ -27,6 +27,17 @@
 				<p id="about_notice" class="x_help-block" hidden="hidden">{$lang->about_timeline_notice}</p>
 			</div>
 		</div>
+		<div class="x_control-group">
+			<label for="replace" class="x_control-label">{$lang->cmd_timeline_replace}</label>
+			<div class="x_controls">
+				<select name="replace" id="replace">
+					<option value="N">{$lang->cmd_no}</option>
+					<option value="Y" selected="selected"|cond="$timeline_info->replace == 'Y'">{$lang->cmd_yes}</option>
+				</select>
+				<a href="#about_replace" class="x_icon-question-sign" data-toggle="#about_replace">{$lang->help}</a>
+				<p id="about_replace" class="x_help-block" hidden="hidden">{$lang->about_timeline_replace}</p>
+			</div>
+		</div>
 	</section>
 	<section class="section">
 		<h1>{$lang->cmd_timeline_filter}</h1>

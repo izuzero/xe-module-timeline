@@ -9,10 +9,11 @@
 class timeline extends ModuleObject
 {
 	private $columns = array(
-		array( 'timeline_registered_info', 'notice',        'char', 1,  'N', TRUE  ),
-		array( 'timeline_registered_info', 'standard_date', 'date', '', '',  FALSE ),
-		array( 'timeline_registered_info', 'limit_date',    'date', '', '',  FALSE ),
-		array( 'timeline_registered_info', 'auto_renewal',  'char', 1,  'N', TRUE  )
+		array( 'timeline_registered_info', 'notice',        'char', 1,    'N',  TRUE  ),
+		array( 'timeline_registered_info', 'replace',       'char', 1,    'N',  TRUE  ),
+		array( 'timeline_registered_info', 'standard_date', 'date', NULL, NULL, FALSE ),
+		array( 'timeline_registered_info', 'limit_date',    'date', NULL, NULL, FALSE ),
+		array( 'timeline_registered_info', 'auto_renewal',  'char', 1,    'N',  TRUE  )
 	);
 
 	private $indexes = array(
