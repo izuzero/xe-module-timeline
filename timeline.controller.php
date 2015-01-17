@@ -336,6 +336,9 @@ class timelineController extends timeline
 			// 현재 모듈 정보를 게시글 모듈 정보와 동기화
 			$module_info->mid = $origin_module_info->mid;
 			$module_info->module_srl = $origin_module_info->module_srl;
+			$module_info->use_status = $origin_module_info->use_status;
+			$module_info->use_anonymous = $target_module_info->use_anonymous;
+			$module_info->protect_content = $target_module_info->protect_content;
 		}
 
 		$act = Context::get('act');
@@ -401,6 +404,9 @@ class timelineController extends timeline
 					// 모듈 정보 교체
 					$module_info->mid = $target_module_info->mid;
 					$module_info->module_srl = $target_module_info->module_srl;
+					$module_info->use_status = $target_module_info->use_status;
+					$module_info->use_anonymous = $target_module_info->use_anonymous;
+					$module_info->protect_content = $target_module_info->protect_content;
 				}
 			}
 		}
@@ -426,6 +432,10 @@ class timelineController extends timeline
 		if ($this->curr_module_info)
 		{
 			$module_info = clone($this->curr_module_info);
+			$module_info->use_status = $oModule->module_info->use_status;
+			$module_info->use_anonymous = $oModule->module_info->use_anonymous;
+			$module_info->protect_content = $oModule->module_info->protect_content;
+			$module_info->secret = $oModule->module_info->secret;
 		}
 		else
 		{
@@ -463,24 +473,6 @@ class timelineController extends timeline
 		$oModule->search_list_count = $module_info->search_list_count;
 		$oModule->page_count = $module_info->page_count;
 		$oModule->except_notice = $module_info->except_notice == 'N' ? FALSE : TRUE;
-
-		$status_list = array();
-		if (!empty($module_info->use_status))
-		{
-			$status_name_list = $oDocumentModel->getStatusNameList();
-			$use_status = explode('|@|', $module_info->use_status);
-			if (is_array($use_status))
-			{
-				foreach ($use_status as $key => $value)
-				{
-					$status_list[$value] = $status_name_list[$value];
-				}
-			}
-		}
-		if (isset($status_list['SECRET']))
-		{
-			$oModule->module_info->secret = 'Y';
-		}
 
 		$oTimelineModel = getModel('timeline');
 		$timeline_info = $oTimelineModel->getTimelineInfo($module_info->module_srl);
