@@ -506,6 +506,11 @@ class timelineController extends timeline
 			$oModule->module_info->use_category = 'N';
 		}
 
+		if (Context::get('act') === 'dispBoardWrite')
+		{
+			$oModule->grant->write_document = TRUE;
+		}
+
 		if ($module_info->consultation == 'Y' && !$oModule->grant->manager)
 		{
 			$oModule->consultation = TRUE;
