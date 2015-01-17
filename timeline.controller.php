@@ -12,8 +12,14 @@ class timelineController extends timeline
 	{
 	}
 
+	/**
+	 * @brief 타임라인 게시판 등록
+	 * @param object $args ($args->module_srl 값은 필수)
+	 * @return object
+	 */
 	function insertTimelineInfo($args)
 	{
+		// 인자 유효성 검증
 		if (!(is_object($args) && $args->module_srl))
 		{
 			return new Object(-1, 'msg_timeline_no_module_srl');
@@ -21,19 +27,24 @@ class timelineController extends timeline
 
 		$oDB = DB::getInstance();
 		$oDB->begin();
+		// DB에 남아 있는 타임라인 게시판 정보 삭제
 		$output = $this->deleteTimelineInfo($args->module_srl);
 		if (!$output->toBool())
 		{
+			// DB 접근에 문제가 생겼을 경우 롤백
 			$oDB->rollback();
 			return $output;
 		}
 
+		// 타임라인 게시판 등록
 		$output = executeQuery('timeline.insertTimelineInfo', $args);
 		if ($output->toBool())
 		{
 			$oDB->commit();
+			// 메모리에서 타임라인 게시판 정보 삭제
 			unset($GLOBALS['__timeline__']['timeline_list']);
 			unset($GLOBALS['__timeline__']['timeline_info']);
+			// 타임라인 모듈 캐시 삭제
 			$oCacheHandler = CacheHandler::getInstance('object', NULL, TRUE);
 			if ($oCacheHandler->isSupport())
 			{
@@ -42,14 +53,22 @@ class timelineController extends timeline
 		}
 		else
 		{
+			// DB 접근에 문제가 생겼을 경우 롤백
 			$oDB->rollback();
 		}
 
 		return $output;
 	}
 
+	/**
+	 * @brief 타임라인 게시판의 자식 게시판 등록
+	 * @param int $module_srl
+	 * @param array $target_srls
+	 * @return object
+	 */
 	function insertAttachInfo($module_srl, $target_srls = array())
 	{
+		// 인자 유효성 검증
 		if (!($module_srl && is_numeric($module_srl)))
 		{
 			return new Object(-1, 'msg_timeline_no_module_srl');
@@ -61,21 +80,25 @@ class timelineController extends timeline
 
 		$oDB = DB::getInstance();
 		$oDB->begin();
+		// DB에 남아 있는 자식 게시판 정보 삭제
 		$output = $this->deleteAttachInfo($module_srl);
 		if (!$output->toBool())
 		{
+			// DB 접근에 문제가 생겼을 경우 롤백
 			$oDB->rollback();
 			return $output;
 		}
 
 		$args = new stdClass();
 		$args->module_srl = $module_srl;
+		// 배열로 입력 받은 target_srl 값을 하나씩 등록
 		foreach ($target_srls as $target_srl)
 		{
 			$args->target_srl = $target_srl;
 			$output = executeQuery('timeline.insertAttachInfo', $args);
 			if (!$output->toBool())
 			{
+				// DB 접근에 문제가 생겼을 경우 롤백
 				$oDB->rollback();
 				return $output;
 			}
@@ -85,15 +108,23 @@ class timelineController extends timeline
 		return new Object();
 	}
 
+	/**
+	 * @brief 타임라인 게시판 정보 삭제
+	 * @param int $module_srl
+	 * @return object
+	 */
 	function deleteTimelineInfo($module_srl)
 	{
 		$args = new stdClass();
 		$args->module_srl = $module_srl;
+		// DB에서 타임라인 게시판 정보 삭제
 		$output = executeQuery('timeline.deleteTimelineInfo', $args);
 		if ($output->toBool())
 		{
+			// 메모리에서 타임라인 게시판 정보 삭제
 			unset($GLOBALS['__timeline__']['timeline_list']);
 			unset($GLOBALS['__timeline__']['timeline_info']);
+			// 타임라인 모듈 캐시 삭제
 			$oCacheHandler = CacheHandler::getInstance('object', NULL, TRUE);
 			if ($oCacheHandler->isSupport())
 			{
@@ -104,14 +135,22 @@ class timelineController extends timeline
 		return $output;
 	}
 
+	/**
+	 * @brief 타임라인 게시판의 자식 게시판 삭제
+	 * @param int $module_srl
+	 * @return object
+	 */
 	function deleteAttachInfo($module_srl)
 	{
 		$args = new stdClass();
 		$args->module_srl = $module_srl;
+		// DB에서 자식 게시판 정보 삭제
 		$output = executeQuery('timeline.deleteAttachInfo', $args);
 		if ($output->toBool())
 		{
+			// 메모리에서 자식 게시판 정보 삭제
 			unset($GLOBALS['__timeline__']['attach_info']);
+			// 타임라인 모듈 캐시 삭제
 			$oCacheHandler = CacheHandler::getInstance('object', NULL, TRUE);
 			if ($oCacheHandler->isSupport())
 			{
@@ -122,24 +161,34 @@ class timelineController extends timeline
 		return $output;
 	}
 
+	/**
+	 * @brief 타임라인 게시판 정보에서 기준 날짜 자동 갱신
+	 * @param object $timeline_info
+	 * @return object
+	 */
 	function renewalTimelineInfo(&$timeline_info)
 	{
 		$oTimelineModel = getModel('timeline');
 		$standard_date = strtotime($timeline_info->standard_date);
 		$limit_date = $oTimelineModel->getStrTime($timeline_info->limit_date);
+		// 기준 날짜가 잘못된 날짜 형식이거나 시간 범위가 없거나 자동 갱신을 사용하지 않을 경우
 		if ($standard_date === FALSE || is_null($limit_date) || $timeline_info->auto_renewal != 'Y')
 		{
 			return $timeline_info;
 		}
 
+		// 현재 시간
 		$now_date = time();
+		// 기준 날짜와 시간 범위간의 차이
 		$diff_date = strtotime($limit_date, $standard_date) - $standard_date;
+		// 갱신해야 할 횟수 계산
 		$repeat = floor(($now_date - $standard_date) / $diff_date);
 		if (!$repeat)
 		{
 			return $timeline_info;
 		}
 
+		// 기준 날짜에 차이값을 갱신해야 할 횟수만큼 곱하고 더해서 새로운 기준 날짜 계산
 		$last_date = $standard_date + ($diff_date * $repeat);
 		$timeline_info->standard_date = date('YmdHis', $last_date);
 		$this->insertTimelineInfo($timeline_info);
@@ -147,9 +196,16 @@ class timelineController extends timeline
 		return $timeline_info;
 	}
 
+	/**
+	 * @brief 타임라인 게시판 정보를 템플릿으로 넘겨주는 트리거
+	 * @param object $module_info
+	 * @return object
+	 */
 	function _setTimelineInfo(&$module_info)
 	{
+		// 타임라인 게시판 정보
 		$curr_module_info = $this->curr_module_info;
+		// 타임라인 게시판 정보가 없을 경우
 		if (!$curr_module_info)
 		{
 			return new Object();
@@ -157,10 +213,12 @@ class timelineController extends timeline
 
 		$oTimelineModel = getModel('timeline');
 		$timeline_info = $oTimelineModel->getTimelineInfo($curr_module_info->module_srl);
+		// 자식 게시판 정보
 		$attach_info = $timeline_info->attach_info;
 		$attach_info[] = $timeline_info->module_srl;
 
 		$oModuleModel = getModel('module');
+		// 자식 게시판들의 모듈 정보 구하기
 		$modules_info = array();
 		foreach ($attach_info as $item)
 		{
@@ -174,12 +232,19 @@ class timelineController extends timeline
 			}
 		}
 
+		// 템플릿으로 값 넘겨주기
 		Context::set('timeline_info', $timeline_info);
 		Context::set('modules_info', $modules_info);
 
 		return new Object();
 	}
 
+	/**
+	 * @brief module id replace 회피를 위한 트리거
+	 * @description document_srl 상의 mid와 주소 상의 mid가 다를 경우 발생하는 문제 해결
+	 * @param object $oModule
+	 * @return object
+	 */
 	function _replaceMid(&$oModule)
 	{
 		$mid = Context::get('mid');
@@ -199,6 +264,7 @@ class timelineController extends timeline
 
 		$oTimelineModel = getModel('timeline');
 		$timeline_info = $oTimelineModel->getTimelineInfo($curr_module_info->module_srl);
+		// 타임라인 게시판이 아닌 경우
 		if (!$timeline_info)
 		{
 			return new Object();
@@ -211,12 +277,14 @@ class timelineController extends timeline
 		if ($oDocument->isExists())
 		{
 			$attach_info = $timeline_info->attach_info;
+			// 자식 게시판에 등록되어 있는 게시판의 공지글이지만 공지 게시글 통합 기능을 사용하지 않는 경우
 			if (in_array($module_srl, $attach_info) && $oDocument->get('is_notice') == 'Y' && $timeline_info->notice != 'Y')
 			{
 				return new Object();
 			}
 
 			$attach_info[] = $timeline_info->module_srl;
+			// 타임라인 게시판에 표시될 수 있는 게시글이면서 공지글이거나 게시글 필터링을 통과했을 경우
 			if (in_array($module_srl, $attach_info) && ($oDocument->get('is_notice') == 'Y' || $oTimelineModel->isFilterPassed($timeline_info->module_srl, $document_srl)))
 			{
 				$origin_module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
@@ -225,45 +293,62 @@ class timelineController extends timeline
 
 		$oCommentModel = getModel('comment');
 		$oComment = $oCommentModel->getComment($comment_srl);
+		// 게시글과 댓글 정보가 모두 있으나 댓글 정보 상의 document_srl 값과 게시글 정보 상의 document_srl 값이 다른 경우
 		if ($oDocument->isExists() && $oComment->isExists() && $oComment->get('document_srl') != $document_srl)
 		{
 			return new Object(-1, 'msg_invalid_request');
 		}
 
+		// 현재 모듈 정보와 게시글의 모듈 정보를 저장
 		$this->curr_module_info = $curr_module_info;
 		$this->origin_module_info = $origin_module_info;
+		// 게시글의 모듈 정보가 있고 원래 게시판으로 이동 기능을 사용하지 않으며 크롤러가 아닌 경우
 		if ($origin_module_info && $timeline_info->replace != 'Y' && !isCrawler())
 		{
+			// module id replace 회피
 			Context::set('mid', $oModule->mid = $origin_module_info->mid);
 		}
 
 		return new Object();
 	}
 
+	/**
+	 * @brief 모듈 정보를 후킹하는 트리거
+	 * @param object $module_info
+	 * @return object
+	 */
 	function _replaceModuleInfo(&$module_info)
 	{
+		// 타임라인 게시판 정보가 없을 경우
 		$curr_module_info = $this->curr_module_info;
 		if (!$curr_module_info)
 		{
 			return new Object();
 		}
 
-		$module_info = clone($curr_module_info);
+		// 현재 모듈 정보를 다른 변수에 저장
 		$origin_module_info = clone($module_info);
+		// 현재 모듈 정보를 타임라인 게시판 정보로 교체
+		$module_info = clone($curr_module_info);
+		// 게시글 모듈 정보가 있을 경우
 		if ($origin_module_info)
 		{
+			// 현재 모듈 정보를 게시글 모듈 정보와 동기화
 			$module_info->mid = $origin_module_info->mid;
 			$module_info->module_srl = $origin_module_info->module_srl;
 		}
 
 		$act = Context::get('act');
 		$exception = array('dispBoardWrite', 'procBoardInsertDocument', 'procBoardInsertComment');
+		// 게시글 작성 화면, 게시글 등록, 댓글 등록에 대한 예외 처리
 		if (in_array($act, $exception))
 		{
+			// 모듈 정보를 교체하지 않음
 			$this->is_replaceable = FALSE;
 
 			$oDocumentModel = getModel('document');
 			$oDocument = $oDocumentModel->getDocument(Context::get('document_srl'));
+			// 게시글이 없는 경우 (게시글 수정, 댓글 등록, 댓글 수정에 대해서는 작동하지 않도록 하기 위함)
 			if (!$oDocument->isExists())
 			{
 				$oModuleModel = getModel('module');
@@ -271,6 +356,7 @@ class timelineController extends timeline
 				$timeline_info = $oTimelineModel->getTimelineInfo($curr_module_info->module_srl);
 				$module_srl = Context::get('module_srl');
 				$category_srl = Context::get('category_srl');
+				// 카테고리 번호를 입력 받았을 경우
 				if ($category_srl)
 				{
 					$attach_info = $timeline_info->attach_info;
@@ -285,18 +371,23 @@ class timelineController extends timeline
 						}
 						unset($category);
 					}
+					// 현재 타임라인 게시판에서 사용할 수 없는 카테고리거나 없는 카테고리인 경우
 					if (!$category)
 					{
 						return new Object(-1, 'msg_not_permitted');
 					}
+					// 카테고리 번호에 맞는 모듈 정보 불러오기
 					$target_module_info = $oModuleModel->getModuleInfoByModuleSrl($category->module_srl);
 				}
+				// 모듈 번호를 입력 받았을 경우
 				else if ($module_srl)
 				{
 					$attach_info = $timeline_info->attach_info;
 					$attach_info[] = $timeline_info->module_srl;
+					// 모듈 번호가 자식 게시판으로 등록되어 있는 경우
 					if (in_array($module_srl, $attach_info))
 					{
+						// 모듈 번호에 맞는 모듈 정보 불러오기
 						$target_module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
 					}
 					else
@@ -304,8 +395,10 @@ class timelineController extends timeline
 						return new Object(-1, 'msg_not_permitted');
 					}
 				}
+				// 모듈 정보를 교체해야 하는 경우
 				if ($target_module_info)
 				{
+					// 모듈 정보 교체
 					$module_info->mid = $target_module_info->mid;
 					$module_info->module_srl = $target_module_info->module_srl;
 				}
@@ -313,16 +406,24 @@ class timelineController extends timeline
 		}
 		else
 		{
+			// 모듈 정보를 교체함
 			$this->is_replaceable = TRUE;
 		}
 
+		// module id replace를 위해 바꿔 놓았던 값을 돌려놓기
 		Context::set('mid', $curr_module_info->mid);
 
 		return new Object();
 	}
 
+	/**
+	 * @brief 후킹한 모듈 정보를 되돌리는 트리거
+	 * @param object $oModule
+	 * @return object
+	 */
 	function _rollbackBeforeModuleInfo(&$oModule)
 	{
+		// 타임라인 게시판 정보가 없는 경우
 		$module_info = $this->curr_module_info;
 		if (!$module_info)
 		{
@@ -330,20 +431,29 @@ class timelineController extends timeline
 		}
 
 		$oModuleModel = getModel('module');
+		// 모듈 정보에 스킨 정보 동기화
 		$oModuleModel->syncSkinInfoToModuleInfo($module_info);
+		// 모듈 정보를 교체하지 말아야 할 경우
 		if (!$this->is_replaceable)
 		{
+			// 모듈 정보 롤백
 			$module_info->mid = $oModule->mid;
 			$module_info->module_srl = $oModule->module_srl;
 		}
 
 		$oDocumentModel = getModel('document');
 		$oDocument = &$oDocumentModel->getDocument(Context::get('document_srl'));
+		// 게시글 정보가 있는 경우
 		if ($oDocument->isExists())
 		{
+			/**
+			 * module_srl 값을 현재 모듈 정보로 동기화
+			 * 동기화하지 않을 경우 게시판 모듈에서 오류가 발생함
+			 */
 			$oDocument->add('module_srl', $module_info->module_srl);
 		}
 
+		// board.view.php init 함수 재실행
 		$oModule->mid = $module_info->mid;
 		$oModule->module_srl = $module_info->module_srl;
 		$oModule->module_info = $oModule->origin_module_info = $module_info;
@@ -422,10 +532,16 @@ class timelineController extends timeline
 		return new Object();
 	}
 
+	/**
+	 * @brief 모듈 정보를 원래대로 돌려놓는 트리거
+	 * @param object $oModule
+	 * @return object
+	 */
 	function _rollbackAfterModuleInfo(&$oModule)
 	{
 		$origin_module_info = $this->origin_module_info;
 		$oDocument = Context::get('oDocument');
+		// 게시글 모듈 정보가 있고 템플릿으로 넘겨준 게시글 정보가 있는 경우
 		if ($origin_module_info && $oDocument && $oDocument->isExists())
 		{
 			$oDocument->add('module_srl', $origin_module_info->module_srl);
@@ -435,10 +551,16 @@ class timelineController extends timeline
 		return new Object();
 	}
 
+	/**
+	 * @brief 타임라인 게시판 게시글 교체
+	 * @param object $oModule
+	 * @return object
+	 */
 	function _replaceDocumentList(&$oModule)
 	{
 		$notice_list = Context::get('notice_list');
 		$document_list = Context::get('document_list');
+		// 타임라인 게시판 정보가 없거나, 게시글 보기 권한이 없거나, 공지 목록이 없고 게시글 목록이 없는 경우
 		if (!$this->curr_module_info || !$oModule->grant->list || is_null($notice_list) && is_null($document_list))
 		{
 			return new Object();
@@ -449,6 +571,7 @@ class timelineController extends timeline
 		$attach_info = $timeline_info->attach_info;
 		$attach_info[] = $timeline_info->module_srl;
 
+		// 게시글 목록 불러오기
 		$args = new stdClass();
 		$args->module_srl = $attach_info;
 		$args->tl_title = $timeline_info->title;
@@ -544,28 +667,31 @@ class timelineController extends timeline
 		return new Object();
 	}
 
+	/**
+	 * @brief 타임라인 게시판 카테고리 목록 교체
+	 * @param object $oModule
+	 * @return object
+	 */
 	function _replaceCategoryList(&$oModule)
 	{
 		$category_list = Context::get('category_list');
-		if (is_null($category_list) || $oModule->module_info->use_category != 'Y')
-		{
-			return new Object();
-		}
-
-		$oTimelineModel = getModel('timeline');
-		$timeline_info = $oTimelineModel->getTimelineInfo($oModule->module_srl);
-		if (!$timeline_info)
+		// 타임라인 게시판 정보가 없거나 템플릿으로 넘어온 카테고리 목록이 없거나 카테고리를 사용하지 않는 게시판일 경우
+		if (!$this->curr_module_info || is_null($category_list) || $oModule->module_info->use_category != 'Y')
 		{
 			return new Object();
 		}
 
 		$oDocumentModel = getModel('document');
+		$oTimelineModel = getModel('timeline');
+		$timeline_info = $oTimelineModel->getTimelineInfo($oModule->module_srl);
 		$attach_info = $timeline_info->attach_info;
+		// 카테고리 목록 불러오기
 		foreach ($attach_info as $item)
 		{
 			$category_list += $oDocumentModel->getCategoryList($item);
 		}
 
+		// 카테고리 목록을 템플릿으로 넘겨주기
 		Context::set('category_list', $category_list);
 		$oSecurity = new Security();
 		$oSecurity->encodeHTML('category_list.', 'category_list.childs.');
@@ -573,10 +699,16 @@ class timelineController extends timeline
 		return new Object();
 	}
 
+	/**
+	 * @brief 타임라인 게시판 공지 목록 교체
+	 * @param object $oModule
+	 * @return object
+	 */
 	function _replaceNoticeList(&$oModule)
 	{
 		$notice_list = Context::get('notice_list');
 		$document_list = Context::get('document_list');
+		// 타임라인 게시판 정보가 없거나 공지 목록이 없고 게시글 목록이 없는 경우
 		if (!$this->curr_module_info || (is_null($notice_list) && is_null($document_list)))
 		{
 			return new Object();
@@ -584,6 +716,7 @@ class timelineController extends timeline
 
 		$oTimelineModel = getModel('timeline');
 		$timeline_info = $oTimelineModel->getTimelineInfo($this->curr_module_info->module_srl);
+		// 공지 게시글 통합 기능을 사용하지 않는 경우
 		if ($timeline_info->notice != 'Y')
 		{
 			return new Object();
@@ -594,6 +727,7 @@ class timelineController extends timeline
 		$args->module_srl[] = $timeline_info->module_srl;
 
 		$oDocumentModel = getModel('document');
+		// 공지 게시글 불러오기
 		$notice_list = $oDocumentModel->getNoticeList($args, $oModule->columnList);
 		Context::set('notice_list', $notice_list->data);
 

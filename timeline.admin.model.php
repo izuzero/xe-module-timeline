@@ -12,6 +12,14 @@ class timelineAdminModel extends timeline
 	{
 	}
 
+	/**
+	 * @brief 입력 받은 값을 페이징 처리합니다.
+	 * @param array $args 페이징 처리할 값
+	 * @param int $page 표시할 페이지 번호
+	 * @param int $page_count 한 번에 표시할 페이지 갯수
+	 * @param int $list_count 한 페이지에 보여줄 값 갯수
+	 * @return object
+	 */
 	function getPageHandler($args = array(), $page = 1, $page_count = 10, $list_count = 20)
 	{
 		$page = (int)$page;
