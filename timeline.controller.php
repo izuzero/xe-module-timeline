@@ -439,7 +439,7 @@ class timelineController extends timeline
 	{
 		$notice_list = Context::get('notice_list');
 		$document_list = Context::get('document_list');
-		if (!$this->curr_module_info || (is_null($notice_list) && is_null($document_list)) || !$oModule->grant->list)
+		if (!$this->curr_module_info || !$oModule->grant->list || is_null($notice_list) && is_null($document_list))
 		{
 			return new Object();
 		}
@@ -554,13 +554,13 @@ class timelineController extends timeline
 
 		$oTimelineModel = getModel('timeline');
 		$timeline_info = $oTimelineModel->getTimelineInfo($oModule->module_srl);
-		$attach_info = $timeline_info->attach_info;
 		if (!$timeline_info)
 		{
 			return new Object();
 		}
 
 		$oDocumentModel = getModel('document');
+		$attach_info = $timeline_info->attach_info;
 		foreach ($attach_info as $item)
 		{
 			$category_list += $oDocumentModel->getCategoryList($item);
