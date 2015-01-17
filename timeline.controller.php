@@ -240,7 +240,6 @@ class timelineController extends timeline
 
 	function _replaceModuleInfo(&$module_info)
 	{
-		$origin_module_info = $module_info;
 		$curr_module_info = $this->curr_module_info;
 		if (!$curr_module_info)
 		{
@@ -248,40 +247,43 @@ class timelineController extends timeline
 		}
 
 		$module_info = clone($curr_module_info);
-		Context::set('mid', $module_info->mid);
+		$origin_module_info = clone($module_info);
 		if ($origin_module_info)
 		{
-			$module_info->module_srl = $origin_module_info->module_srl;
 			$module_info->mid = $origin_module_info->mid;
+			$module_info->module_srl = $origin_module_info->module_srl;
 		}
 
 		$act = Context::get('act');
-		$acts = array('procBoardInsertDocument', 'procBoardInsertComment');
-		$document_srl = Context::get('document_srl');
-		$oDocumentModel = getModel('document');
-		$oDocument = $oDocumentModel->getDocument($document_srl);
-		$document_srl = $oDocument->get('document_srl');
-		if (in_array($act, $acts))
+		$exception = array('dispBoardWrite', 'procBoardInsertDocument', 'procBoardInsertComment');
+		if (in_array($act, $exception))
 		{
-			$oModuleModel = getModel('module');
-			if ($oDocument->isExists())
+			$this->is_replaceable = FALSE;
+
+			$oDocumentModel = getModel('document');
+			$oDocument = $oDocumentModel->getDocument(Context::get('document_srl'));
+			if (!$oDocument->isExists())
 			{
-				$module_srl = $oDocument->get('module_srl');
-				$target_module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
-			}
-			else if ($act === $acts[0])
-			{
+				$oModuleModel = getModel('module');
+				$oTimelineModel = getModel('timeline');
+				$timeline_info = $oTimelineModel->getTimelineInfo($curr_module_info->module_srl);
 				$module_srl = Context::get('module_srl');
 				$category_srl = Context::get('category_srl');
 				if ($category_srl)
 				{
-					$category_list = $oDocumentModel->getCategoryList($curr_module_info->module_srl);
+					$attach_info = $timeline_info->attach_info;
+					$attach_info[] = $timeline_info->module_srl;
 					foreach ($attach_info as $item)
 					{
-						$category_list += $oDocumentModel->getCategoryList($item);
+						$category_list = $oDocumentModel->getCategoryList($item);
+						$category = $category_list[$category_srl];
+						if ($category && $category->grant)
+						{
+							break;
+						}
+						unset($category);
 					}
-					$category = $category_list[$category_srl];
-					if (!$category || !$category->grant)
+					if (!$category)
 					{
 						return new Object(-1, 'msg_not_permitted');
 					}
@@ -289,8 +291,6 @@ class timelineController extends timeline
 				}
 				else if ($module_srl)
 				{
-					$oTimelineModel = getModel('timeline');
-					$timeline_info = $oTimelineModel->getTimelineInfo($curr_module_info->module_srl);
 					$attach_info = $timeline_info->attach_info;
 					$attach_info[] = $timeline_info->module_srl;
 					if (in_array($module_srl, $attach_info))
@@ -302,64 +302,91 @@ class timelineController extends timeline
 						return new Object(-1, 'msg_not_permitted');
 					}
 				}
-			}
-			if ($target_module_info)
-			{
-				$this->target_module_info = $target_module_info;
-				$module_info = clone($target_module_info);
+				if ($target_module_info)
+				{
+					$module_info->mid = $target_module_info->mid;
+					$module_info->module_srl = $target_module_info->module_srl;
+				}
 			}
 		}
+		else
+		{
+			$this->is_replaceable = TRUE;
+		}
+
+		Context::set('mid', $curr_module_info->mid);
 
 		return new Object();
 	}
 
 	function _rollbackBeforeModuleInfo(&$oModule)
 	{
-		$curr_module_info = $this->curr_module_info;
-		$target_module_info = $this->target_module_info;
-		if (!$curr_module_info || $target_module_info)
+		$module_info = $this->curr_module_info;
+		if (!$module_info)
 		{
 			return new Object();
 		}
 
-		$document_srl = Context::get('document_srl');
-		$oDocumentModel = getModel('document');
-		$oDocument = &$oDocumentModel->getDocument($document_srl);
-		if ($oDocument->isExists())
+		$oModuleModel = getModel('module');
+		$oModuleModel->syncSkinInfoToModuleInfo($module_info);
+		if (!$this->is_replaceable)
 		{
-			$oDocument->add('module_srl', $curr_module_info->module_srl);
+			$module_info->mid = $oModule->mid;
+			$module_info->module_srl = $oModule->module_srl;
 		}
 
-		$oModuleModel = getModel('module');
-		$oModuleModel->syncSkinInfoToModuleInfo($curr_module_info);
-		$oModule->mid = $curr_module_info->mid;
-		$oModule->module_srl = $curr_module_info->module_srl;
-		$oModule->module_info = $oModule->origin_module_info = $curr_module_info;
-		$oModule->list_count = $curr_module_info->list_count;
-		$oModule->search_list_count = $curr_module_info->search_list_count;
-		$oModule->page_count = $curr_module_info->page_count;
-		$oModule->except_notice = $curr_module_info->except_notice == 'N' ? FALSE : TRUE;
+		$oDocumentModel = getModel('document');
+		$oDocument = &$oDocumentModel->getDocument(Context::get('document_srl'));
+		if ($oDocument->isExists())
+		{
+			$oDocument->add('module_srl', $module_info->module_srl);
+		}
 
-		$status_list = $oModule->_getStatusNameList($oDocumentModel);
-		if(isset($status_list['SECRET']))
+		$oModule->mid = $module_info->mid;
+		$oModule->module_srl = $module_info->module_srl;
+		$oModule->module_info = $oModule->origin_module_info = $module_info;
+		$oModule->list_count = $module_info->list_count;
+		$oModule->search_list_count = $module_info->search_list_count;
+		$oModule->page_count = $module_info->page_count;
+		$oModule->except_notice = $module_info->except_notice == 'N' ? FALSE : TRUE;
+
+		$status_list = array();
+		if (!empty($module_info->use_status))
+		{
+			$status_name_list = $oDocumentModel->getStatusNameList();
+			$use_status = explode('|@|', $module_info->use_status);
+			if (is_array($use_status))
+			{
+				foreach ($use_status as $key => $value)
+				{
+					$status_list[$value] = $status_name_list[$value];
+				}
+			}
+		}
+		if (isset($status_list['SECRET']))
 		{
 			$oModule->module_info->secret = 'Y';
 		}
 
-		$category_list = $oDocumentModel->getCategoryList($curr_module_info->module_srl);
-		foreach ($attach_info as $item)
+		$oTimelineModel = getModel('timeline');
+		$timeline_info = $oTimelineModel->getTimelineInfo($module_info->module_srl);
+		$category_list = $oDocumentModel->getCategoryList($module_info->module_srl);
+		if ($timeline_info)
 		{
-			$category_list += $oDocumentModel->getCategoryList($item);
+			foreach ($timeline_info->attach_info as $item)
+			{
+				$category_list += $oDocumentModel->getCategoryList($item);
+			}
 		}
 		if (count($category_list))
 		{
-			if ($curr_module_info->hide_category)
+			if ($module_info->hide_category)
 			{
-				$oModule->module_info->use_category = ($curr_module_info->hide_category == 'Y') ? 'N' : 'Y';
+				$oModule->module_info->use_category = ($module_info->hide_category == 'Y') ? 'N' : 'Y';
 			}
-			else if ($curr_module_info->use_category)
+			else if ($module_info->use_category)
 			{
-				$oModule->module_info->hide_category = ($curr_module_info->use_category == 'Y') ? 'N' : 'Y';
+				$oModule->module_info->hide_category = ($module_info->use_category == 'Y') ? 'N' : 'Y';
 			}
 			else
 			{
@@ -373,10 +400,10 @@ class timelineController extends timeline
 			$oModule->module_info->use_category = 'N';
 		}
 
-		if ($curr_module_info->consultation == 'Y' && !$oModule->grant->manager)
+		if ($module_info->consultation == 'Y' && !$oModule->grant->manager)
 		{
-			$is_logged = Context::get('is_logged');
 			$oModule->consultation = TRUE;
+			$is_logged = Context::get('is_logged');
 			if (!$is_logged)
 			{
 				$oModule->grant->list = FALSE;
