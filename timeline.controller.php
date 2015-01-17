@@ -317,30 +317,77 @@ class timelineController extends timeline
 	{
 		$curr_module_info = $this->curr_module_info;
 		$target_module_info = $this->target_module_info;
-		$document_srl = Context::get('document_srl');
-		$extra_keys = Context::get('extra_keys');
-		if ($curr_module_info)
+		if (!$curr_module_info || $target_module_info)
 		{
-			$oDocumentModel = getModel('document');
-			$oDocument = &$oDocumentModel->getDocument($document_srl);
-			$document_srl = $oDocument->get('document_srl');
-			if (!$target_module_info)
+			return new Object();
+		}
+
+		$document_srl = Context::get('document_srl');
+		$oDocumentModel = getModel('document');
+		$oDocument = &$oDocumentModel->getDocument($document_srl);
+		if ($oDocument->isExists())
+		{
+			$oDocument->add('module_srl', $curr_module_info->module_srl);
+		}
+
+		$oModuleModel = getModel('module');
+		$oModuleModel->syncSkinInfoToModuleInfo($curr_module_info);
+		$oModule->mid = $curr_module_info->mid;
+		$oModule->module_srl = $curr_module_info->module_srl;
+		$oModule->module_info = $oModule->origin_module_info = $curr_module_info;
+		$oModule->list_count = $curr_module_info->list_count;
+		$oModule->search_list_count = $curr_module_info->search_list_count;
+		$oModule->page_count = $curr_module_info->page_count;
+		$oModule->except_notice = $curr_module_info->except_notice == 'N' ? FALSE : TRUE;
+
+		$status_list = $oModule->_getStatusNameList($oDocumentModel);
+		if(isset($status_list['SECRET']))
+		{
+			$oModule->module_info->secret = 'Y';
+		}
+
+		$category_list = $oDocumentModel->getCategoryList($curr_module_info->module_srl);
+		foreach ($attach_info as $item)
+		{
+			$category_list += $oDocumentModel->getCategoryList($item);
+		}
+		if (count($category_list))
+		{
+			if ($curr_module_info->hide_category)
 			{
-				$oModuleModel = getModel('module');
-				$oModuleModel->syncSkinInfoToModuleInfo($curr_module_info);
-				$oModule->mid = $curr_module_info->mid;
-				$oModule->module_srl = $curr_module_info->module_srl;
-				$oModule->module_info = $oModule->origin_module_info = $curr_module_info;
-				if ($oDocument->isExists())
-				{
-					$oDocument->add('module_srl', $curr_module_info->module_srl);
-				}
+				$oModule->module_info->use_category = ($curr_module_info->hide_category == 'Y') ? 'N' : 'Y';
 			}
-			if (isset($extra_keys))
+			else if ($curr_module_info->use_category)
 			{
-				$extra_keys = $oDocumentModel->getExtraKeys($curr_module_info->module_srl);
-				Context::set('extra_keys', $extra_keys);
+				$oModule->module_info->hide_category = ($curr_module_info->use_category == 'Y') ? 'N' : 'Y';
 			}
+			else
+			{
+				$oModule->module_info->hide_category = 'N';
+				$oModule->module_info->use_category = 'Y';
+			}
+		}
+		else
+		{
+			$oModule->module_info->hide_category = 'Y';
+			$oModule->module_info->use_category = 'N';
+		}
+
+		if ($curr_module_info->consultation == 'Y' && !$oModule->grant->manager)
+		{
+			$is_logged = Context::get('is_logged');
+			$oModule->consultation = TRUE;
+			if (!$is_logged)
+			{
+				$oModule->grant->list = FALSE;
+				$oModule->grant->write_document = FALSE;
+				$oModule->grant->write_comment = FALSE;
+				$oModule->grant->view = FALSE;
+			}
+		}
+		else
+		{
+			$oModule->consultation = FALSE;
 		}
 
 		return new Object();
