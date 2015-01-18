@@ -247,17 +247,20 @@ class timelineController extends timeline
 	 */
 	function _replaceMid(&$oModule)
 	{
-		$mid = Context::get('mid');
-		$comment_srl = Context::get('comment_srl');
-		$document_srl = Context::get('document_srl');
-		if (!$mid)
-		{
-			return new Object();
-		}
-
+		$mid = $oModule->mid;
+		$module = $oModule->module;
+		$document_srl = $oModule->document_srl;
+		$site_module_info = Context::get('site_module_info');
 		$oModuleModel = getModel('module');
-		$curr_module_info = $oModuleModel->getModuleInfoByMid($mid);
-		if (!$curr_module_info->module_srl)
+		if ($mid)
+		{
+			$curr_module_info = $oModuleModel->getModuleInfoByMid($mid, $site_module_info->site_srl);
+		}
+		else if (!$module && !$document_srl)
+		{
+			$curr_module_info = $site_module_info;
+		}
+		if (!$curr_module_info)
 		{
 			return new Object();
 		}
@@ -276,27 +279,18 @@ class timelineController extends timeline
 		$module_srl = $oDocument->get('module_srl');
 		if ($oDocument->isExists())
 		{
-			$attach_info = $timeline_info->attach_info;
 			// 자식 게시판에 등록되어 있는 게시판의 공지글이지만 공지 게시글 통합 기능을 사용하지 않는 경우
+			$attach_info = $timeline_info->attach_info;
 			if (in_array($module_srl, $attach_info) && $oDocument->get('is_notice') == 'Y' && $timeline_info->notice != 'Y')
 			{
 				return new Object();
 			}
-
-			$attach_info[] = $timeline_info->module_srl;
 			// 타임라인 게시판에 표시될 수 있는 게시글이면서 공지글이거나 게시글 필터링을 통과했을 경우
+			$attach_info[] = $timeline_info->module_srl;
 			if (in_array($module_srl, $attach_info) && ($oDocument->get('is_notice') == 'Y' || $oTimelineModel->isFilterPassed($timeline_info->module_srl, $document_srl)))
 			{
 				$origin_module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
 			}
-		}
-
-		$oCommentModel = getModel('comment');
-		$oComment = $oCommentModel->getComment($comment_srl);
-		// 게시글과 댓글 정보가 모두 있으나 댓글 정보 상의 document_srl 값과 게시글 정보 상의 document_srl 값이 다른 경우
-		if ($oDocument->isExists() && $oComment->isExists() && $oComment->get('document_srl') != $document_srl)
-		{
-			return new Object(-1, 'msg_invalid_request');
 		}
 
 		// 현재 모듈 정보와 게시글의 모듈 정보를 저장
@@ -351,8 +345,20 @@ class timelineController extends timeline
 
 			$oDocumentModel = getModel('document');
 			$oDocument = $oDocumentModel->getDocument(Context::get('document_srl'));
+			$document_srl = $oDocument->get('document_srl');
+			// 댓글 번호 유효성 검사
+			if ($oDocument->isExists())
+			{
+				$oCommentModel = getModel('comment');
+				$oComment = $oCommentModel->getComment(Context::get('comment_srl'));
+				// 게시글과 댓글 정보가 모두 있으나 댓글 정보 상의 document_srl 값과 게시글 정보 상의 document_srl 값이 다른 경우
+				if ($oComment->isExists() && $oComment->get('document_srl') != $document_srl)
+				{
+					return new Object(-1, 'msg_invalid_request');
+				}
+			}
 			// 게시글이 없는 경우 (게시글 수정, 댓글 등록, 댓글 수정에 대해서는 작동하지 않도록 하기 위함)
-			if (!$oDocument->isExists())
+			else
 			{
 				$oModuleModel = getModel('module');
 				$oTimelineModel = getModel('timeline');
