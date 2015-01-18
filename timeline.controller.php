@@ -343,24 +343,40 @@ class timelineController extends timeline
 			// 모듈 정보를 교체하지 않음
 			$this->is_replaceable = FALSE;
 
+			$oModuleModel = getModel('module');
 			$oDocumentModel = getModel('document');
 			$oDocument = $oDocumentModel->getDocument(Context::get('document_srl'));
-			$document_srl = $oDocument->get('document_srl');
-			// 댓글 번호 유효성 검사
+			// 게시글이 있는 경우 (게시글 수정, 댓글 등록, 댓글 수정)
 			if ($oDocument->isExists())
 			{
 				$oCommentModel = getModel('comment');
 				$oComment = $oCommentModel->getComment(Context::get('comment_srl'));
-				// 게시글과 댓글 정보가 모두 있으나 댓글 정보 상의 document_srl 값과 게시글 정보 상의 document_srl 값이 다른 경우
-				if ($oComment->isExists() && $oComment->get('document_srl') != $document_srl)
+				// 댓글이 있는 경우 (댓글 수정)
+				if ($oComment->isExists())
 				{
-					return new Object(-1, 'msg_invalid_request');
+					// 댓글 정보 유효성 검사
+					$document_srl = $oDocument->get('document_srl');
+					$target_document_srl = $oComment->get('document_srl');
+					if ($document_srl == $target_document_srl)
+					{
+						$module_srl = $oComment->get('module_srl');
+						$target_module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
+					}
+					else
+					{
+						return new Object(-1, 'msg_invalid_request');
+					}
+				}
+				// 댓글이 없는 경우 (게시글 수정, 댓글 등록)
+				else
+				{
+					$module_srl = $oDocument->get('module_srl');
+					$target_module_info = $oModuleModel->getModuleInfoByModuleSrl($module_srl);
 				}
 			}
-			// 게시글이 없는 경우 (게시글 수정, 댓글 등록, 댓글 수정에 대해서는 작동하지 않도록 하기 위함)
+			// 게시글이 없는 경우 (게시글 등록)
 			else
 			{
-				$oModuleModel = getModel('module');
 				$oTimelineModel = getModel('timeline');
 				$timeline_info = $oTimelineModel->getTimelineInfo($curr_module_info->module_srl);
 				$module_srl = Context::get('module_srl');
@@ -404,16 +420,16 @@ class timelineController extends timeline
 						return new Object(-1, 'msg_not_permitted');
 					}
 				}
-				// 모듈 정보를 교체해야 하는 경우
-				if ($target_module_info)
-				{
-					// 모듈 정보 교체
-					$module_info->mid = $target_module_info->mid;
-					$module_info->module_srl = $target_module_info->module_srl;
-					$module_info->use_status = $target_module_info->use_status;
-					$module_info->use_anonymous = $target_module_info->use_anonymous;
-					$module_info->protect_content = $target_module_info->protect_content;
-				}
+			}
+			// 모듈 정보를 교체해야 하는 경우
+			if ($target_module_info)
+			{
+				// 모듈 정보 교체
+				$module_info->mid = $target_module_info->mid;
+				$module_info->module_srl = $target_module_info->module_srl;
+				$module_info->use_status = $target_module_info->use_status;
+				$module_info->use_anonymous = $target_module_info->use_anonymous;
+				$module_info->protect_content = $target_module_info->protect_content;
 			}
 		}
 		else
@@ -513,7 +529,7 @@ class timelineController extends timeline
 		}
 
 		$act = $oModule->act;
-		if ($act === 'dispBoardWrite' && $timeline_info && $timeline_info->write == 'Y')
+		if ($act == 'dispBoardWrite' && $timeline_info && $timeline_info->write == 'Y')
 		{
 			$oModule->grant->write_document = TRUE;
 		}
