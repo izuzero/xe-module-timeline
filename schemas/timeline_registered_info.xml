@@ -2,6 +2,7 @@
 	<column name="module_srl" type="number" size="11" notnull="notnull" primary_key="primary_key" />
 	<column name="notice" type="char" size="1" default="N" notnull="notnull" />
 	<column name="replace" type="char" size="1" default="N" notnull="notnull" />
+	<column name="write" type="char" size="1" default="N" notnull="notnull" />
 	<column name="title" type="text" />
 	<column name="content" type="text" />
 	<column name="tags" type="text" />

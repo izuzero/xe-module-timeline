@@ -30,6 +30,9 @@
 	<item name="cmd_timeline_replace">
 		<value xml:lang="ko"><![CDATA[원래 게시판으로 이동]]></value>
 	</item>
+	<item name="cmd_timeline_write">
+		<value xml:lang="ko"><![CDATA[게시글 쓰기 화면 권한]]></value>
+	</item>
 	<item name="cmd_timeline_excess">
 		<value xml:lang="ko"><![CDATA[초과]]></value>
 	</item>
@@ -80,6 +83,9 @@
 	</item>
 	<item name="about_timeline_replace">
 		<value xml:lang="ko"><![CDATA[게시글을 열람하면 원래 게시글이 있는 게시판으로 이동할지 선택합니다.]]></value>
+	</item>
+	<item name="about_timeline_write">
+		<value xml:lang="ko"><![CDATA[게시글 쓰기 권한이 없는 이용자라도 게시글 쓰기 화면에 대해서는 일시적으로 권한을 부여합니다.]]></value>
 	</item>
 	<item name="about_timeline_text">
 		<value xml:lang="ko"><![CDATA[설정한 값이 들어간 게시글만 불러옵니다. 입력하지 않으면 이 조건을 사용하지 않습니다.]]></value>

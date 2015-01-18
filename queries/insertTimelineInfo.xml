@@ -6,6 +6,7 @@
 		<column name="module_srl" var="module_srl" />
 		<column name="notice" var="notice" />
 		<column name="replace" var="replace" />
+		<column name="write" var="write" />
 		<column name="title" var="title" />
 		<column name="content" var="content" />
 		<column name="tags" var="tags" />
