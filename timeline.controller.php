@@ -331,8 +331,8 @@ class timelineController extends timeline
 			$module_info->mid = $origin_module_info->mid;
 			$module_info->module_srl = $origin_module_info->module_srl;
 			$module_info->use_status = $origin_module_info->use_status;
-			$module_info->use_anonymous = $target_module_info->use_anonymous;
-			$module_info->protect_content = $target_module_info->protect_content;
+			$module_info->use_anonymous = $origin_module_info->use_anonymous;
+			$module_info->protect_content = $origin_module_info->protect_content;
 		}
 
 		$act = Context::get('act');
@@ -451,8 +451,10 @@ class timelineController extends timeline
 	 */
 	function _rollbackBeforeModuleInfo(&$oModule)
 	{
+		// 타임라인 게시판일 경우
 		if ($this->curr_module_info)
 		{
+			// 모듈 정보를 타임라인 게시판 정보로 동기화
 			$module_info = clone($this->curr_module_info);
 			$module_info->use_status = $oModule->module_info->use_status;
 			$module_info->use_anonymous = $oModule->module_info->use_anonymous;
@@ -487,7 +489,7 @@ class timelineController extends timeline
 			$oDocument->add('module_srl', $module_info->module_srl);
 		}
 
-		// board.view.php init 함수 재실행
+		// 바뀐 모듈 정보로 게시판 설정 동기화
 		$oModule->mid = $module_info->mid;
 		$oModule->module_srl = $module_info->module_srl;
 		$oModule->module_info = $oModule->origin_module_info = $module_info;
