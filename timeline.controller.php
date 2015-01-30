@@ -530,28 +530,29 @@ class timelineController extends timeline
 			$oModule->module_info->use_category = 'N';
 		}
 
-		$act = $oModule->act;
-		if ($act == 'dispBoardWrite' && $timeline_info && $timeline_info->write == 'Y')
+		$logged_info = Context::get('logged_info');
+		$grant = $oModuleModel->getGrant($module_info, $logged_info);
+		if ($timeline_info && $timeline_info->write == 'Y' && $oModule->act == 'dispBoardWrite')
 		{
-			$oModule->grant->write_document = TRUE;
+			$grant->write_document = TRUE;
 		}
-
-		if ($module_info->consultation == 'Y' && !$oModule->grant->manager)
+		if ($module_info->consultation == 'Y' && !$grant->manager)
 		{
 			$oModule->consultation = TRUE;
-			$is_logged = Context::get('is_logged');
-			if (!$is_logged)
+			if (!Context::get('is_logged'))
 			{
-				$oModule->grant->list = FALSE;
-				$oModule->grant->write_document = FALSE;
-				$oModule->grant->write_comment = FALSE;
-				$oModule->grant->view = FALSE;
+				$grant->list = FALSE;
+				$grant->write_document = FALSE;
+				$grant->write_comment = FALSE;
+				$grant->view = FALSE;
 			}
 		}
 		else
 		{
 			$oModule->consultation = FALSE;
 		}
+
+		$oModule->grant = $grant;
 
 		return new Object();
 	}
