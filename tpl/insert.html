@@ -132,6 +132,20 @@
 				<p id="about_comment_count" class="x_help-block" hidden="hidden">{$lang->about_timeline_count}</p>
 			</div>
 		</div>
+		<div class="x_control-group">
+			<label for="popular_count" class="x_control-label">{$lang->cmd_timeline_voted_count} - {$lang->cmd_timeline_blamed_count}</label>
+			<div class="x_controls">
+				<input type="number" name="popular_count" id="popular_count" value="0"|cond="!$timeline_info->popular_count" value="{$timeline_info->popular_count}"|cond="$timeline_info->popular_count" />
+				<select name="cond_popular_count">
+					<option value="more">{$lang->cmd_timeline_more}</option>
+					<option value="less" selected="selected"|cond="$timeline_info->cond_popular_count == 'less'">{$lang->cmd_timeline_less}</option>
+					<option value="excess" selected="selected"|cond="$timeline_info->cond_popular_count == 'excess'">{$lang->cmd_timeline_excess}</option>
+					<option value="below" selected="selected"|cond="$timeline_info->cond_popular_count == 'below'">{$lang->cmd_timeline_below}</option>
+				</select>
+				<a href="#about_popular_count" class="x_icon-question-sign" data-toggle="#about_popular_count">{$lang->help}</a>
+				<p id="about_popular_count" class="x_help-block" hidden="hidden">{$lang->about_timeline_count}</p>
+			</div>
+		</div>
 	</section>
 	<section class="section">
 		<h1>{$lang->cmd_timeline_date_config}</h1>

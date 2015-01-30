@@ -11,39 +11,31 @@
 		<condition operation="equal" column="member_srl" var="member_srl" filter="number" pipe="and" />
 		<condition operation="in" column="status" var="status_list" pipe="and" />
 		<condition operation="more" column="list_order" var="list_order" filter="number" pipe="and" />
-		<group pipe="and">
-			<condition operation="like" column="title" var="tl_title" />
-			<condition operation="like" column="content" var="tl_content" pipe="and" />
-			<condition operation="like" column="tags" var="tl_tags" pipe="and" />
-		</group>
-		<group pipe="and">
-			<condition operation="excess" column="readed_count" var="tl_excess_readed_count" filter="number" />
-			<condition operation="below" column="readed_count" var="tl_below_readed_count" filter="number" pipe="and" />
-			<condition operation="more" column="readed_count" var="tl_more_readed_count" filter="number" pipe="and" />
-			<condition operation="less" column="readed_count" var="tl_less_readed_count" filter="number" pipe="and" />
-		</group>
-		<group pipe="and">
-			<condition operation="excess" column="voted_count" var="tl_excess_voted_count" filter="number" />
-			<condition operation="below" column="voted_count" var="tl_below_voted_count" filter="number" pipe="and" />
-			<condition operation="more" column="voted_count" var="tl_more_voted_count" filter="number" pipe="and" />
-			<condition operation="less" column="voted_count" var="tl_less_voted_count" filter="number" pipe="and" />
-		</group>
-		<group pipe="and">
-			<condition operation="below" column="blamed_count" var="tl_excess_blamed_count" filter="number" />
-			<condition operation="excess" column="blamed_count" var="tl_below_blamed_count" filter="number" pipe="and" />
-			<condition operation="less" column="blamed_count" var="tl_more_blamed_count" filter="number" pipe="and" />
-			<condition operation="more" column="blamed_count" var="tl_less_blamed_count" filter="number" pipe="and" />
-		</group>
-		<group pipe="and">
-			<condition operation="excess" column="comment_count" var="tl_excess_comment_count" filter="number" />
-			<condition operation="below" column="comment_count" var="tl_below_comment_count" filter="number" pipe="and" />
-			<condition operation="more" column="comment_count" var="tl_more_comment_count" filter="number" pipe="and" />
-			<condition operation="less" column="comment_count" var="tl_less_comment_count" filter="number" pipe="and" />
-		</group>
-		<group pipe="and">
-			<condition operation="more" column="regdate" var="tl_least_date" filter="number" />
-			<condition operation="less" column="regdate" var="tl_last_date" filter="number" pipe="and" />
-		</group>
+		<condition operation="like" column="title" var="tl_title" pipe="and" />
+		<condition operation="like" column="content" var="tl_content" pipe="and" />
+		<condition operation="like" column="tags" var="tl_tags" pipe="and" />
+		<condition operation="excess" column="readed_count" var="tl_excess_readed_count" filter="number" pipe="and" />
+		<condition operation="below" column="readed_count" var="tl_below_readed_count" filter="number" pipe="and" />
+		<condition operation="more" column="readed_count" var="tl_more_readed_count" filter="number" pipe="and" />
+		<condition operation="less" column="readed_count" var="tl_less_readed_count" filter="number" pipe="and" />
+		<condition operation="excess" column="voted_count" var="tl_excess_voted_count" filter="number" pipe="and" />
+		<condition operation="below" column="voted_count" var="tl_below_voted_count" filter="number" pipe="and" />
+		<condition operation="more" column="voted_count" var="tl_more_voted_count" filter="number" pipe="and" />
+		<condition operation="less" column="voted_count" var="tl_less_voted_count" filter="number" pipe="and" />
+		<condition operation="below" column="blamed_count" var="tl_excess_blamed_count" filter="number" pipe="and" />
+		<condition operation="excess" column="blamed_count" var="tl_below_blamed_count" filter="number" pipe="and" />
+		<condition operation="less" column="blamed_count" var="tl_more_blamed_count" filter="number" pipe="and" />
+		<condition operation="more" column="blamed_count" var="tl_less_blamed_count" filter="number" pipe="and" />
+		<condition operation="excess" column="comment_count" var="tl_excess_comment_count" filter="number" pipe="and" />
+		<condition operation="below" column="comment_count" var="tl_below_comment_count" filter="number" pipe="and" />
+		<condition operation="more" column="comment_count" var="tl_more_comment_count" filter="number" pipe="and" />
+		<condition operation="less" column="comment_count" var="tl_less_comment_count" filter="number" pipe="and" />
+		<condition operation="excess" column="voted_count + blamed_count" var="tl_excess_popular_count" filter="number" pipe="and" />
+		<condition operation="below" column="voted_count + blamed_count" var="tl_below_popular_count" filter="number" pipe="and" />
+		<condition operation="more" column="voted_count + blamed_count" var="tl_more_popular_count" filter="number" pipe="and" />
+		<condition operation="less" column="voted_count + blamed_count" var="tl_less_popular_count" filter="number" pipe="and" />
+		<condition operation="more" column="regdate" var="tl_least_date" filter="number" pipe="and" />
+		<condition operation="less" column="regdate" var="tl_last_date" filter="number" pipe="and" />
 	</conditions>
 	<navigation>
 		<index var="sort_index" default="list_order" order="order_type" />

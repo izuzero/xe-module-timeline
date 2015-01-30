@@ -14,10 +14,12 @@
 		<column name="voted_count" var="voted_count" />
 		<column name="blamed_count" var="blamed_count" />
 		<column name="comment_count" var="comment_count" />
+		<column name="popular_count" var="popular_count" />
 		<column name="cond_readed_count" var="cond_readed_count" />
 		<column name="cond_voted_count" var="cond_voted_count" />
 		<column name="cond_blamed_count" var="cond_blamed_count" />
 		<column name="cond_comment_count" var="cond_comment_count" />
+		<column name="cond_popular_count" var="cond_popular_count" />
 		<column name="standard_date" var="standard_date" />
 		<column name="limit_date" var="limit_date" />
 		<column name="auto_renewal" var="auto_renewal" />

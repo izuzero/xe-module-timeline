@@ -10,10 +10,12 @@
 	<column name="voted_count" type="number" size="11" default="0" notnull="notnull" index="idx_vote_count" />
 	<column name="blamed_count" type="number" size="11" default="0" notnull="notnull" index="idx_blame_count" />
 	<column name="comment_count" type="number" size="11" default="0" notnull="notnull" index="idx_comment_count" />
+	<column name="popular_count" type="number" size="11" default="0" notnull="notnull" index="idx_popular_count" />
 	<column name="cond_readed_count" type="varchar" size="6" default="more" notnull="notnull" />
 	<column name="cond_voted_count" type="varchar" size="6" default="more" notnull="notnull" />
 	<column name="cond_blamed_count" type="varchar" size="6" default="more" notnull="notnull" />
 	<column name="cond_comment_count" type="varchar" size="6" default="more" notnull="notnull" />
+	<column name="cond_popular_count" type="varchar" size="6" default="more" notnull="notnull" />
 	<column name="standard_date" type="date" index="idx_standard_date" />
 	<column name="limit_date" type="date" index="idx_limit_date" />
 	<column name="auto_renewal" type="char" size="1" default="N" notnull="notnull" />

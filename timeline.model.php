@@ -35,15 +35,23 @@ class timelineModel extends timeline
 			return FALSE;
 		}
 
-		$tl_filter = array('readed_count', 'voted_count', 'blamed_count', 'comment_count');
+		$tl_filter = array('readed_count', 'voted_count', 'blamed_count', 'comment_count', 'popular_count');
 		foreach ($tl_filter as $filter)
 		{
 			$key = $timeline_info->{'cond_' . $filter};
 			$val = $timeline_info->{$filter};
-			$if_val = $oDocument->get($filter);
-			if ($filter === $tl_filter[2])
+			if ($filter == 'popular_count')
 			{
-				$if_val *= -1;
+				$if_val = $oDocument->get('voted_count');
+				$if_val += $oDocument->get('blamed_count');
+			}
+			else
+			{
+				$if_val = $oDocument->get($filter);
+				if ($filter == 'blamed_count')
+				{
+					$if_val *= -1;
+				}
 			}
 			if ($val && (($key == 'excess' && $val >= $if_val) || ($key == 'below' && $val <= $if_val) || ($key == 'more' && $val > $if_val) || ($key == 'less' && $val < $if_val)))
 			{
@@ -537,7 +545,7 @@ class timelineModel extends timeline
 		$args->order_type = $opts->order_type;
 		$args->sort_index = $opts->sort_index;
 
-		$tl_filter = array('readed_count', 'voted_count', 'blamed_count', 'comment_count');
+		$tl_filter = array('readed_count', 'voted_count', 'blamed_count', 'comment_count', 'popular_count');
 		$tl_operation = array('excess', 'below', 'more', 'less');
 		foreach ($tl_filter as $filter)
 		{

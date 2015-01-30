@@ -616,7 +616,7 @@ class timelineController extends timeline
 			$args->module_srl = $module_srl;
 		}
 
-		$tl_filter = array('readed_count', 'voted_count', 'blamed_count', 'comment_count');
+		$tl_filter = array('readed_count', 'voted_count', 'blamed_count', 'comment_count', 'popular_count');
 		$tl_operation = array('excess', 'below', 'more', 'less');
 		foreach ($tl_filter as $filter)
 		{
