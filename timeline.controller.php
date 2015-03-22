@@ -91,10 +91,12 @@ class timelineController extends timeline
 
 		$args = new stdClass();
 		$args->module_srl = $module_srl;
+		$args->priority = 0;
 		// 배열로 입력 받은 target_srl 값을 하나씩 등록
 		foreach ($target_srls as $target_srl)
 		{
 			$args->target_srl = $target_srl;
+			$args->priority++;
 			$output = executeQuery('timeline.insertAttachInfo', $args);
 			if (!$output->toBool())
 			{

@@ -1,5 +1,6 @@
 <table name="timeline_attach_info">
 	<column name="module_srl" type="number" size="11" notnull="notnull" unique="idx_attach_info" />
 	<column name="target_srl" type="number" size="11" notnull="notnull" unique="idx_attach_info" />
+	<column name="priority" type="number" size="11" notnull="notnull" unique="idx_priority" />
 	<column name="regdate" type="date" index="idx_regdate" />
 </table>

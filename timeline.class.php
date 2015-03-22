@@ -17,14 +17,16 @@ class timeline extends ModuleObject
 		array( 'timeline_registered_info', 'cond_popular_count', 'varchar', 6,   'more', TRUE  ),
 		array( 'timeline_registered_info', 'standard_date',      'date',    NULL, NULL,  FALSE ),
 		array( 'timeline_registered_info', 'limit_date',         'date',    NULL, NULL,  FALSE ),
-		array( 'timeline_registered_info', 'auto_renewal',       'char',    1,    'N',   TRUE  )
+		array( 'timeline_registered_info', 'auto_renewal',       'char',    1,    'N',   TRUE  ),
+		array( 'timeline_attach_info',     'priority',           'number',  11,   '1',   TRUE  )
 	);
 
 	// table, index, column, unique
 	private $indexes = array(
 		array( 'timeline_registered_info', 'idx_popular_count', array('popular_count'), FALSE ),
 		array( 'timeline_registered_info', 'idx_standard_date', array('standard_date'), FALSE ),
-		array( 'timeline_registered_info', 'idx_limit_date',    array('limit_date'),    FALSE )
+		array( 'timeline_registered_info', 'idx_limit_date',    array('limit_date'),    FALSE ),
+		array( 'timeline_attach_info',     'idx_priority',      array('priority'),      FALSE )
 	);
 
 	private $triggers = array(

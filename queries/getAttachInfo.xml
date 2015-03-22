@@ -10,6 +10,6 @@
 		<condition operation="equal" column="target_srl" var="target_srl" pipe="and" />
 	</conditions>
 	<navigation>
-		<index var="sort_index" default="target_srl" order="asc" />
+		<index var="sort_index" default="priority" order="asc" />
 	</navigation>
 </query>
