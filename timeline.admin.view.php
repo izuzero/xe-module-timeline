@@ -36,6 +36,11 @@ class timelineAdminView extends timeline
 		$security = new Security();
 		$security->encodeHTML('module_category..');
 
+		// 모듈 설치 여부 불러오기
+		$is_installed = !$this->checkUpdate();
+		Context::set('is_installed', $is_installed);
+
+		// 템플릿 경로 설정
 		$this->setTemplatePath($this->module_path . 'tpl');
 	}
 

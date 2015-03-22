@@ -18,3 +18,5 @@
 		<a href="{getUrl('', 'module', 'admin', 'act', 'dispTimelineAdminInsert', 'page', $page)}">{$lang->cmd_timeline_register}</a>
 	</li>
 </ul>
+
+<p cond="!$is_installed" class="x_alert x_alert-error">{$lang->about_timeline_no_installed}</p>
