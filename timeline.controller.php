@@ -593,8 +593,8 @@ class timelineController extends timeline
 	{
 		$notice_list = Context::get('notice_list');
 		$document_list = Context::get('document_list');
-		// 타임라인 게시판 정보가 없거나, 게시글 보기 권한이 없거나, 공지 목록이 없고 게시글 목록이 없는 경우
-		if (!$this->curr_module_info || !$oModule->grant->list || is_null($notice_list) && is_null($document_list))
+		// 타임라인 게시판 정보가 없거나, 게시글을 바꿔치기할 act가 아니거나, 게시글 보기 권한이 없거나, 공지 목록이 없고 게시글 목록이 없는 경우
+		if (!$this->curr_module_info || $oModule->act != 'dispBoardContent' || !$oModule->grant->list || is_null($notice_list) && is_null($document_list))
 		{
 			return new Object();
 		}
