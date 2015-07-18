@@ -298,17 +298,21 @@ class timelineController extends timeline
 		// 현재 모듈 정보와 게시글의 모듈 정보를 저장
 		$this->curr_module_info = $curr_module_info;
 		$this->origin_module_info = $origin_module_info;
-		// 원래 게시판으로 이동 기능을 사용할 경우
-		if ($timeline_info->replace == 'Y')
+
+		// 타임라인 모듈이 동작하는 경우
+		if ($origin_module_info && !isCrawler())
 		{
-			// 페이지 값 초기화
-			Context::set('page', NULL);
-		}
-		// 게시글의 모듈 정보가 있고 크롤러가 아닌 경우
-		else if ($origin_module_info && !isCrawler())
-		{
-			// module id replace 회피
-			Context::set('mid', $oModule->mid = $origin_module_info->mid);
+			// 원래 게시판으로 이동 기능을 사용할 경우
+			if ($timeline_info->replace == 'Y')
+			{
+				// 페이지 값 초기화
+				Context::set('page', NULL);
+			}
+			else
+			{
+				// module id replace 회피
+				Context::set('mid', $oModule->mid = $origin_module_info->mid);
+			}
 		}
 
 		return new Object();
