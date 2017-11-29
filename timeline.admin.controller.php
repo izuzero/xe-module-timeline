@@ -33,7 +33,7 @@ class timelineAdminController extends timeline
 		// 입력 받은 기준 날짜가 잘못된 날짜인 경우
 		if ($args->standard_date && !strtotime($args->standard_date))
 		{
-			return new Object(-1, 'msg_timeline_invalid_date');
+			return $this->createObject(-1, 'msg_timeline_invalid_date');
 		}
 
 		// 이미 등록되어 있는 타임라인 게시판인지 확인

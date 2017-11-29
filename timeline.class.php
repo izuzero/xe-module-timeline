@@ -53,7 +53,7 @@ class timeline extends ModuleObject
 			$oModuleController->insertTrigger($trigger[0], $trigger[1], $trigger[2], $trigger[3], $trigger[4]);
 		}
 
-		return new Object();
+		return $this->createObject();
 	}
 
 	function moduleUninstall()
@@ -65,7 +65,7 @@ class timeline extends ModuleObject
 			$oModuleController->deleteTrigger($trigger[0], $trigger[1], $trigger[2], $trigger[3], $trigger[4]);
 		}
 
-		return new Object();
+		return $this->createObject();
 	}
 
 	function checkUpdate()
@@ -140,8 +140,16 @@ class timeline extends ModuleObject
 			}
 		}
 
-		return new Object();
+		return $this->createObject();
 	}
+
+    protected function createObject($error = 0, $message = 'success') {
+        if(class_exists("BaseObject")) {
+            return new BaseObject($error, $message);
+        } else {
+            return new Object($error, $message);
+        }
+    }
 }
 
 /* End of file timeline.class.php */
