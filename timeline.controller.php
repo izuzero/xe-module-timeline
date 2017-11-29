@@ -22,7 +22,7 @@ class timelineController extends timeline
 		// 인자 유효성 검증
 		if (!(is_object($args) && $args->module_srl))
 		{
-			return new Object(-1, 'msg_timeline_no_module_srl');
+			return $this->createObject(-1, 'msg_timeline_no_module_srl');
 		}
 
 		$oDB = DB::getInstance();
@@ -71,11 +71,11 @@ class timelineController extends timeline
 		// 인자 유효성 검증
 		if (!($module_srl && is_numeric($module_srl)))
 		{
-			return new Object(-1, 'msg_timeline_no_module_srl');
+			return $this->createObject(-1, 'msg_timeline_no_module_srl');
 		}
 		if (!is_array($target_srls))
 		{
-			return new Object(-1, 'msg_invalid_request');
+			return $this->createObject(-1, 'msg_invalid_request');
 		}
 
 		$oDB = DB::getInstance();
@@ -107,7 +107,7 @@ class timelineController extends timeline
 		}
 
 		$oDB->commit();
-		return new Object();
+		return $this->createObject();
 	}
 
 	/**
@@ -210,7 +210,7 @@ class timelineController extends timeline
 		// 타임라인 게시판 정보가 없을 경우
 		if (!$curr_module_info)
 		{
-			return new Object();
+			return $this->createObject();
 		}
 
 		$oTimelineModel = getModel('timeline');
@@ -238,7 +238,7 @@ class timelineController extends timeline
 		Context::set('timeline_info', $timeline_info);
 		Context::set('modules_info', $modules_info);
 
-		return new Object();
+		return $this->createObject();
 	}
 
 	/**
@@ -264,7 +264,7 @@ class timelineController extends timeline
 		}
 		if (!$curr_module_info)
 		{
-			return new Object();
+			return $this->createObject();
 		}
 
 		$oTimelineModel = getModel('timeline');
@@ -272,7 +272,7 @@ class timelineController extends timeline
 		// 타임라인 게시판이 아닌 경우
 		if (!$timeline_info)
 		{
-			return new Object();
+			return $this->createObject();
 		}
 
 		$oDocumentModel = getModel('document');
@@ -285,7 +285,7 @@ class timelineController extends timeline
 			$attach_info = $timeline_info->attach_info;
 			if (in_array($module_srl, $attach_info) && $oDocument->get('is_notice') == 'Y' && $timeline_info->notice != 'Y')
 			{
-				return new Object();
+				return $this->createObject();
 			}
 			// 타임라인 게시판에 표시될 수 있는 게시글이면서 공지글이거나 게시글 필터링을 통과했을 경우
 			$attach_info[] = $timeline_info->module_srl;
@@ -315,7 +315,7 @@ class timelineController extends timeline
 			}
 		}
 
-		return new Object();
+		return $this->createObject();
 	}
 
 	/**
@@ -329,7 +329,7 @@ class timelineController extends timeline
 		$curr_module_info = $this->curr_module_info;
 		if (!$curr_module_info)
 		{
-			return new Object();
+			return $this->createObject();
 		}
 
 		// 현재 모듈 정보를 다른 변수에 저장
@@ -376,7 +376,7 @@ class timelineController extends timeline
 					}
 					else
 					{
-						return new Object(-1, 'msg_invalid_request');
+						return $this->createObject(-1, 'msg_invalid_request');
 					}
 				}
 				// 댓글이 없는 경우 (게시글 수정, 댓글 등록)
@@ -411,7 +411,7 @@ class timelineController extends timeline
 					// 현재 타임라인 게시판에서 사용할 수 없는 카테고리거나 없는 카테고리인 경우
 					if (!$category)
 					{
-						return new Object(-1, 'msg_not_permitted');
+						return $this->createObject(-1, 'msg_not_permitted');
 					}
 					// 카테고리 번호에 맞는 모듈 정보 불러오기
 					$target_module_info = $oModuleModel->getModuleInfoByModuleSrl($category->module_srl);
@@ -429,7 +429,7 @@ class timelineController extends timeline
 					}
 					else
 					{
-						return new Object(-1, 'msg_not_permitted');
+						return $this->createObject(-1, 'msg_not_permitted');
 					}
 				}
 			}
@@ -453,7 +453,7 @@ class timelineController extends timeline
 		// module id replace를 위해 바꿔 놓았던 값을 돌려놓기
 		Context::set('mid', $curr_module_info->mid);
 
-		return new Object();
+		return $this->createObject();
 	}
 
 	/**
@@ -475,7 +475,7 @@ class timelineController extends timeline
 		}
 		else
 		{
-			return new Object();
+			return $this->createObject();
 		}
 
 		$oModuleModel = getModel('module');
@@ -566,7 +566,7 @@ class timelineController extends timeline
 
 		$oModule->grant = $grant;
 
-		return new Object();
+		return $this->createObject();
 	}
 
 	/**
@@ -585,7 +585,7 @@ class timelineController extends timeline
 			Context::set('oDocument', $oDocument);
 		}
 
-		return new Object();
+		return $this->createObject();
 	}
 
 	/**
@@ -600,7 +600,7 @@ class timelineController extends timeline
 		// 타임라인 게시판 정보가 없거나, 게시글을 바꿔치기할 act가 아니거나, 게시글 보기 권한이 없거나, 공지 목록이 없고 게시글 목록이 없는 경우
 		if (!$this->curr_module_info || $oModule->act != 'dispBoardContent' || !$oModule->grant->list || is_null($notice_list) && is_null($document_list))
 		{
-			return new Object();
+			return $this->createObject();
 		}
 
 		$oTimelineModel = getModel('timeline');
@@ -701,7 +701,7 @@ class timelineController extends timeline
 		Context::set('page', $output->page);
 		Context::set('page_navigation', $output->page_navigation);
 
-		return new Object();
+		return $this->createObject();
 	}
 
 	/**
@@ -714,7 +714,7 @@ class timelineController extends timeline
 		// 타임라인 게시판 정보가 없거나 카테고리를 사용하지 않는 게시판일 경우
 		if (!$this->curr_module_info || $oModule->module_info->use_category != 'Y')
 		{
-			return new Object();
+			return $this->createObject();
 		}
 
 		$oDocumentModel = getModel('document');
@@ -734,7 +734,7 @@ class timelineController extends timeline
 		$oSecurity = new Security();
 		$oSecurity->encodeHTML('category_list.', 'category_list.childs.');
 
-		return new Object();
+		return $this->createObject();
 	}
 
 	/**
@@ -749,7 +749,7 @@ class timelineController extends timeline
 		// 타임라인 게시판 정보가 없거나 공지 목록이 없고 게시글 목록이 없는 경우
 		if (!$this->curr_module_info || (is_null($notice_list) && is_null($document_list)))
 		{
-			return new Object();
+			return $this->createObject();
 		}
 
 		$oTimelineModel = getModel('timeline');
@@ -757,7 +757,7 @@ class timelineController extends timeline
 		// 공지 게시글 통합 기능을 사용하지 않는 경우
 		if ($timeline_info->notice != 'Y')
 		{
-			return new Object();
+			return $this->createObject();
 		}
 
 		$args = new stdClass();
@@ -769,7 +769,7 @@ class timelineController extends timeline
 		$notice_list = $oDocumentModel->getNoticeList($args, $oModule->columnList);
 		Context::set('notice_list', $notice_list->data);
 
-		return new Object();
+		return $this->createObject();
 	}
 }
 
